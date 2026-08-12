@@ -1,6 +1,5 @@
 import type { AnyDb } from "@/db/types";
 import {
-  updateProject,
   type NewProjectInput,
   type ProjectUpdateFields,
 } from "@/db/projects";
@@ -8,6 +7,8 @@ import { projects, activities } from "@/db/schema";
 import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
 import { stageGroupFor } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
+import { eq } from "drizzle-orm";
+import * as activityLog from "@/lib/activity-log";
 
 export async function runCreateProject(
   db: AnyDb,
@@ -59,7 +60,8 @@ export async function runCreateProject(
 
 export async function runUpdateProject(
   db: AnyDb,
-  formData: FormData
+  formData: FormData,
+  actorUserId: string | null = null
 ): Promise<ActionResult> {
   const id = formData.get("id");
   if (typeof id !== "string" || id.length === 0) {
@@ -92,12 +94,33 @@ export async function runUpdateProject(
     stageGroup: stageGroupFor(parsed.data.stage),
   };
   try {
-    const row = await updateProject(db, id, fields);
-    if (!row) {
-      return { ok: false, error: "No se encontró el proyecto" };
-    }
+    const result = await db.transaction(async (tx): Promise<ActionResult> => {
+      const [current] = await tx
+        .select({ stage: projects.stage, companyId: projects.companyId })
+        .from(projects)
+        .where(eq(projects.id, id))
+        .limit(1);
+      if (!current) {
+        return { ok: false, error: "No se encontró el proyecto" };
+      }
+      await tx.update(projects).set(fields).where(eq(projects.id, id));
+      if (current.stage !== fields.stage) {
+        await tx.insert(activities).values({
+          companyId: current.companyId,
+          projectId: id,
+          userId: actorUserId,
+          type: "stage_change",
+          direction: "none",
+          subject: null,
+          body: null,
+          source: "system",
+          metadata: activityLog.stageChangeMetadata(current.stage, fields.stage),
+        });
+      }
+      return { ok: true };
+    });
+    return result;
   } catch {
     return { ok: false, error: "No se pudo actualizar el proyecto" };
   }
-  return { ok: true };
 }

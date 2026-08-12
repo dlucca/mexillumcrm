@@ -1,9 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { createTestDb } from "@/test/db";
 import { createCompany } from "@/db/companies";
 import { listProjects, listAllProjects } from "@/db/projects";
 import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
 import { listActivitiesForProject } from "@/db/activities";
+import * as activityLog from "@/lib/activity-log";
 
 function formOf(entries: Record<string, string>): FormData {
   const fd = new FormData();
@@ -122,5 +123,49 @@ describe("runUpdateProject", () => {
       })
     );
     expect(result).toEqual({ ok: false, error: "No se encontró el proyecto" });
+  });
+
+  it("cambiar la etapa registra exactamente 1 stage_change con metadata y actor", async () => {
+    const { db, company, id } = await seed();
+    const res = await runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "P", stage: "outreach_enviado", status: "open", solutionType: "unknown" }),
+      "44444444-4444-4444-4444-444444444444"
+    );
+    expect(res).toEqual({ ok: true });
+    const acts = (await listActivitiesForProject(db, id)).filter((a) => a.type === "stage_change");
+    expect(acts).toHaveLength(1);
+    expect(acts[0].userId).toBe("44444444-4444-4444-4444-444444444444");
+    expect(acts[0].metadata).toEqual({
+      fromStage: "lead_sin_contactar",
+      toStage: "outreach_enviado",
+      fromGroup: "lead",
+      toGroup: "qualification",
+    });
+  });
+
+  it("no registra stage_change si la etapa no cambia", async () => {
+    const { db, company, id } = await seed();
+    await runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "Nuevo nombre", stage: "lead_sin_contactar", status: "open", solutionType: "unknown" })
+    );
+    const acts = (await listActivitiesForProject(db, id)).filter((a) => a.type === "stage_change");
+    expect(acts).toHaveLength(0);
+  });
+
+  it("rollback: si falla el registro de stage_change, el update se revierte", async () => {
+    const { db, company, id } = await seed();
+    const spy = vi.spyOn(activityLog, "stageChangeMetadata").mockImplementation(() => {
+      throw new Error("boom");
+    });
+    const res = await runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "P", stage: "contrato_firmado", status: "open", solutionType: "unknown" })
+    );
+    expect(res.ok).toBe(false);
+    const [row] = await listAllProjects(db);
+    expect(row.stage).toBe("lead_sin_contactar"); // revertido
+    spy.mockRestore();
   });
 });
