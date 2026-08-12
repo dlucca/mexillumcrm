@@ -4,6 +4,7 @@ import {
   companyUpdateSchema,
   contactCreateSchema,
   noteCreateSchema,
+  taskCreateSchema,
 } from "@/lib/validation";
 
 describe("companyCreateSchema", () => {
@@ -92,5 +93,24 @@ describe("noteCreateSchema", () => {
   it("rechaza projectId no-uuid", () => {
     const r = noteCreateSchema.safeParse({ projectId: "nope", body: "hola" });
     expect(r.success).toBe(false);
+  });
+});
+
+describe("taskCreateSchema", () => {
+  const pid = "11111111-1111-1111-8111-111111111111";
+  it("acepta y trima válidos", () => {
+    const r = taskCreateSchema.safeParse({ projectId: pid, title: "  Llamar  ", dueDate: "2026-09-01" });
+    expect(r.success).toBe(true);
+    if (r.success) { expect(r.data.title).toBe("Llamar"); expect(r.data.dueDate).toBe("2026-09-01"); }
+  });
+  it("rechaza title vacío", () => {
+    expect(taskCreateSchema.safeParse({ projectId: pid, title: "  ", dueDate: "2026-09-01" }).success).toBe(false);
+  });
+  it("rechaza dueDate ausente o mal formado", () => {
+    expect(taskCreateSchema.safeParse({ projectId: pid, title: "T", dueDate: "" }).success).toBe(false);
+    expect(taskCreateSchema.safeParse({ projectId: pid, title: "T", dueDate: "01/09/2026" }).success).toBe(false);
+  });
+  it("rechaza projectId no-uuid", () => {
+    expect(taskCreateSchema.safeParse({ projectId: "nope", title: "T", dueDate: "2026-09-01" }).success).toBe(false);
   });
 });

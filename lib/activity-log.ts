@@ -96,6 +96,7 @@ export function activityHeadline(activity: {
   }
   if (activity.type === "system") return "Proyecto creado";
   if (activity.type === "note") return activity.body ?? "";
+  if (activity.type === "task") return activity.body ?? activityTypeLabel("task");
   if (
     (activity.type === "proposal" || activity.type === "contract") &&
     activity.metadata
