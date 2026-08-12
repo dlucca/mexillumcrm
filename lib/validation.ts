@@ -132,3 +132,13 @@ export const projectUpdateSchema = z
   });
 
 export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
+
+export const noteCreateSchema = z.object({
+  projectId: z.string().uuid("Proyecto inválido"),
+  body: z.preprocess(
+    (v) => (typeof v === "string" ? v.trim() : ""),
+    z.string().min(1, "La nota no puede estar vacía")
+  ),
+});
+
+export type NoteCreateInput = z.infer<typeof noteCreateSchema>;

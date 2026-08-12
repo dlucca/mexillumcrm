@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, integer, date, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, integer, date, index, jsonb } from "drizzle-orm/pg-core";
 
 export const companies = pgTable(
   "companies",
@@ -101,3 +101,39 @@ export const projects = pgTable(
 
 export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
+
+export const activities = pgTable(
+  "activities",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => companies.id),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    userId: uuid("user_id"),
+    type: text("type").notNull(),
+    direction: text("direction"),
+    subject: text("subject"),
+    body: text("body"),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),
+    source: text("source").notNull(),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    // Las activities son append-only (sin update/delete); updated_at queda por
+    // uniformidad de schema y el $onUpdate nunca dispara en la práctica.
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [
+    index("activities_project_id_idx").on(t.projectId),
+    index("activities_project_id_occurred_at_idx").on(t.projectId, t.occurredAt),
+    index("activities_company_id_idx").on(t.companyId),
+  ]
+).enableRLS();
+
+export type Activity = typeof activities.$inferSelect;
+export type NewActivity = typeof activities.$inferInsert;

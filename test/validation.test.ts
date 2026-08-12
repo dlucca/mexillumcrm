@@ -3,6 +3,7 @@ import {
   companyCreateSchema,
   companyUpdateSchema,
   contactCreateSchema,
+  noteCreateSchema,
 } from "@/lib/validation";
 
 describe("companyCreateSchema", () => {
@@ -70,5 +71,26 @@ describe("contactCreateSchema", () => {
       expect(r.data.role).toBeNull();
       expect(r.data.notes).toBeNull();
     }
+  });
+});
+
+describe("noteCreateSchema", () => {
+  const pid = "11111111-1111-1111-8111-111111111111";
+
+  it("acepta body válido y trimea", () => {
+    const r = noteCreateSchema.safeParse({ projectId: pid, body: "  hola  " });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.body).toBe("hola");
+  });
+
+  it("rechaza body vacío/whitespace", () => {
+    const r = noteCreateSchema.safeParse({ projectId: pid, body: "   " });
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues[0].message).toBe("La nota no puede estar vacía");
+  });
+
+  it("rechaza projectId no-uuid", () => {
+    const r = noteCreateSchema.safeParse({ projectId: "nope", body: "hola" });
+    expect(r.success).toBe(false);
   });
 });

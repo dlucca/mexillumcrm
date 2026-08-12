@@ -3,22 +3,36 @@ import { notFound } from "next/navigation";
 import { db } from "@/db/client";
 import { getProject } from "@/db/projects";
 import { getCompany } from "@/db/companies";
+import { listActivitiesForProject } from "@/db/activities";
+import { ACTIVITY_TYPE_VALUES } from "@/lib/activity-log";
 import { ProjectDetailForm } from "@/components/project-detail-form";
 import { ProjectArchiveButton } from "@/components/project-archive-button";
+import { NewNoteForm } from "@/components/new-note-form";
+import { ActivityFilter } from "@/components/activity-filter";
+import { ActivityTimeline } from "@/components/activity-timeline";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProjectDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ activityType?: string | string[] }>;
 }) {
   const { id } = await params;
+  const { activityType } = await searchParams;
   const project = await getProject(db, id);
   if (!project) notFound();
 
+  // Normaliza (Next puede entregar string[]) y valida contra el vocabulario;
+  // un ?activityType desconocido/viejo se ignora en lugar de romper la query.
+  const rawType = Array.isArray(activityType) ? activityType[0] : activityType;
+  const type = rawType && ACTIVITY_TYPE_VALUES.includes(rawType) ? rawType : undefined;
+
   const company = await getCompany(db, project.companyId);
   const archived = project.archivedAt !== null;
+  const activities = await listActivitiesForProject(db, id, { type });
 
   return (
     <main className="mx-auto max-w-4xl p-8">
@@ -33,6 +47,15 @@ export default async function ProjectDetailPage({
         <p className="mt-2 text-sm text-neutral-500">Este proyecto está archivado.</p>
       )}
       <ProjectDetailForm project={project} />
+
+      <section className="mt-10">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-bold text-2xl tracking-display">Actividad</h2>
+          <ActivityFilter />
+        </div>
+        {!archived && <NewNoteForm projectId={project.id} />}
+        <ActivityTimeline activities={activities} />
+      </section>
     </main>
   );
 }
