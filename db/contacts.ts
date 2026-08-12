@@ -60,3 +60,24 @@ export async function restoreContact(
     .returning();
   return row;
 }
+
+export type ContactUpdateFields = {
+  name: string;
+  email: string | null;
+  phone: string | null;
+  role: string | null;
+  notes: string | null;
+};
+
+export async function updateContact(
+  db: AnyDb,
+  id: string,
+  fields: ContactUpdateFields
+): Promise<Contact | undefined> {
+  const [row] = await db
+    .update(contacts)
+    .set(fields)
+    .where(eq(contacts.id, id))
+    .returning();
+  return row;
+}
