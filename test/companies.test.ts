@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { eq } from "drizzle-orm";
 import { createTestDb } from "@/test/db";
-import { createCompany, listCompanies, getCompany, updateCompany } from "@/db/companies";
+import {
+  createCompany,
+  listCompanies,
+  getCompany,
+  updateCompany,
+  archiveCompany,
+  restoreCompany,
+} from "@/db/companies";
 import { companies } from "@/db/schema";
 
 describe("createCompany", () => {
@@ -94,5 +101,36 @@ describe("updateCompany", () => {
     expect(updated.legalName).toBe("Después S.A. de C.V.");
     expect(updated.industry).toBe("Acuicultura");
     expect(updated.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+  });
+});
+
+describe("archiveCompany / restoreCompany", () => {
+  it("sets and clears archivedAt", async () => {
+    const db = await createTestDb();
+    const created = await createCompany(db, { name: "Camaronera" });
+
+    const archived = await archiveCompany(db, created.id);
+    expect(archived.archivedAt).not.toBeNull();
+
+    const restored = await restoreCompany(db, created.id);
+    expect(restored.archivedAt).toBeNull();
+  });
+});
+
+describe("listCompanies with archived option", () => {
+  it("lists only archived companies when archived: true", async () => {
+    const db = await createTestDb();
+    const active = await createCompany(db, { name: "Activa" });
+    const gone = await createCompany(db, { name: "Archivada" });
+    await archiveCompany(db, gone.id);
+
+    const activos = await listCompanies(db);
+    expect(activos.map((r) => r.name)).toEqual(["Activa"]);
+
+    const archivados = await listCompanies(db, { archived: true });
+    expect(archivados.map((r) => r.name)).toEqual(["Archivada"]);
+
+    // sanity: active id present only in the active list
+    expect(activos.map((r) => r.id)).toContain(active.id);
   });
 });

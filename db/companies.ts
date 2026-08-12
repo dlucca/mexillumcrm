@@ -1,4 +1,4 @@
-import { desc, eq, isNull } from "drizzle-orm";
+import { desc, eq, isNull, isNotNull } from "drizzle-orm";
 import { companies } from "./schema";
 import type { Company } from "./schema";
 import type { AnyDb } from "@/db/types";
@@ -11,11 +11,14 @@ export async function createCompany(
   return row;
 }
 
-export async function listCompanies(db: AnyDb): Promise<Company[]> {
+export async function listCompanies(
+  db: AnyDb,
+  opts: { archived?: boolean } = {}
+): Promise<Company[]> {
   return db
     .select()
     .from(companies)
-    .where(isNull(companies.archivedAt))
+    .where(opts.archived ? isNotNull(companies.archivedAt) : isNull(companies.archivedAt))
     .orderBy(desc(companies.createdAt));
 }
 
@@ -51,6 +54,24 @@ export async function updateCompany(
   const [row] = await db
     .update(companies)
     .set(fields)
+    .where(eq(companies.id, id))
+    .returning();
+  return row;
+}
+
+export async function archiveCompany(db: AnyDb, id: string): Promise<Company> {
+  const [row] = await db
+    .update(companies)
+    .set({ archivedAt: new Date() })
+    .where(eq(companies.id, id))
+    .returning();
+  return row;
+}
+
+export async function restoreCompany(db: AnyDb, id: string): Promise<Company> {
+  const [row] = await db
+    .update(companies)
+    .set({ archivedAt: null })
     .where(eq(companies.id, id))
     .returning();
   return row;
