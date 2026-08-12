@@ -7,6 +7,7 @@ import {
   listContacts,
   archiveContact,
   restoreContact,
+  updateContact,
   type NewContactInput,
 } from "@/db/contacts";
 
@@ -83,5 +84,55 @@ describe("archiveContact / restoreContact", () => {
     const db = await createTestDb();
     const result = await archiveContact(db, "00000000-0000-0000-0000-000000000000");
     expect(result).toBeUndefined();
+  });
+});
+
+describe("updateContact", () => {
+  it("actualiza los campos y retorna la fila", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    const contact = await createContact(db, contactInput(company.id, "Ana"));
+
+    const updated = await updateContact(db, contact.id, {
+      name: "Ana Pérez",
+      email: "ana@acme.mx",
+      phone: "555",
+      role: "Compras",
+      notes: "VIP",
+    });
+
+    expect(updated?.name).toBe("Ana Pérez");
+    expect(updated?.email).toBe("ana@acme.mx");
+    expect(updated?.role).toBe("Compras");
+  });
+
+  it("retorna undefined para un id inexistente", async () => {
+    const db = await createTestDb();
+    const updated = await updateContact(db, "00000000-0000-0000-0000-000000000000", {
+      name: "X",
+      email: null,
+      phone: null,
+      role: null,
+      notes: null,
+    });
+    expect(updated).toBeUndefined();
+  });
+
+  it("mueve updatedAt hacia adelante", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    const contact = await createContact(db, contactInput(company.id, "Ana"));
+
+    const updated = await updateContact(db, contact.id, {
+      name: "Ana 2",
+      email: null,
+      phone: null,
+      role: null,
+      notes: null,
+    });
+
+    expect(updated!.updatedAt.getTime()).toBeGreaterThanOrEqual(
+      contact.updatedAt.getTime()
+    );
   });
 });

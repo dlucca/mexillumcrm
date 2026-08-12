@@ -45,3 +45,16 @@ export const contactCreateSchema = z.object({
 });
 
 export type ContactCreateInput = z.infer<typeof contactCreateSchema>;
+
+export const contactUpdateSchema = z.object({
+  name: z.preprocess(
+    (v) => (typeof v === "string" ? v.trim() : ""),
+    z.string().min(1, "El nombre es obligatorio")
+  ),
+  email: optionalText,
+  phone: optionalText,
+  role: optionalText,
+  notes: optionalText,
+});
+
+export type ContactUpdateInput = z.infer<typeof contactUpdateSchema>;
