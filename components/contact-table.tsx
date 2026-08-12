@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -71,6 +71,10 @@ export function ContactTable({
   archived?: boolean;
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEditingId(null);
+  }, [archived]);
 
   const table = useReactTable({
     data,
