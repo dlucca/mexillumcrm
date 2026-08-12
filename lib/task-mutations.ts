@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import type { AnyDb } from "@/db/types";
 import { taskCreateSchema } from "@/lib/validation";
@@ -59,7 +59,17 @@ export async function runCompleteTask(
       if (task.completedAt != null) {
         return { ok: true };
       }
-      await tx.update(tasks).set({ completedAt: new Date() }).where(eq(tasks.id, taskId));
+      // Guard concurrente: solo completa la fila que sigue abierta. Si otra transacción
+      // ya la completó (doble-submit), el UPDATE afecta 0 filas y no registramos Activity
+      // duplicada (la idempotencia vale también bajo concurrencia, no solo secuencial).
+      const updated = await tx
+        .update(tasks)
+        .set({ completedAt: new Date() })
+        .where(and(eq(tasks.id, taskId), isNull(tasks.completedAt)))
+        .returning({ id: tasks.id });
+      if (updated.length === 0) {
+        return { ok: true };
+      }
       await tx.insert(activities).values({
         companyId: task.companyId,
         projectId: task.projectId,

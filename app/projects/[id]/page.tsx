@@ -61,7 +61,7 @@ export default async function ProjectDetailPage({
             Próxima acción: <span className="font-medium">{nextAction.title}</span> — vence{" "}
             {formatDueDate(nextAction.dueDate)}
           </p>
-        ) : project.status === "open" ? (
+        ) : !archived && project.status === "open" ? (
           <p className="mt-2 text-sm text-amber-700">⚠ Sin próxima acción</p>
         ) : null}
         {!archived && <NewTaskForm projectId={project.id} />}
