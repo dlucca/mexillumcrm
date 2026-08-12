@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { updateProjectAction } from "@/app/projects/actions";
 import type { ActionResult } from "@/lib/company-mutations";
@@ -78,13 +78,9 @@ export function ProjectDetailForm({ project }: { project: Project }) {
     null
   );
   const router = useRouter();
-  const handled = useRef(false);
 
   useEffect(() => {
-    if (state?.ok && !handled.current) {
-      handled.current = true;
-      router.refresh();
-    }
+    if (state?.ok) router.refresh();
   }, [state, router]);
 
   return (
