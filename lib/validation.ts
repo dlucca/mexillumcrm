@@ -31,3 +31,17 @@ export const companyUpdateSchema = z.object({
 });
 
 export type CompanyUpdateInput = z.infer<typeof companyUpdateSchema>;
+
+export const contactCreateSchema = z.object({
+  companyId: z.string().uuid("Empresa inválida"),
+  name: z.preprocess(
+    (v) => (typeof v === "string" ? v.trim() : ""),
+    z.string().min(1, "El nombre es obligatorio")
+  ),
+  email: optionalText,
+  phone: optionalText,
+  role: optionalText,
+  notes: optionalText,
+});
+
+export type ContactCreateInput = z.infer<typeof contactCreateSchema>;
