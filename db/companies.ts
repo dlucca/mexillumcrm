@@ -50,7 +50,7 @@ export async function updateCompany(
   db: AnyDb,
   id: string,
   fields: CompanyUpdateFields
-): Promise<Company> {
+): Promise<Company | undefined> {
   const [row] = await db
     .update(companies)
     .set(fields)
@@ -59,7 +59,10 @@ export async function updateCompany(
   return row;
 }
 
-export async function archiveCompany(db: AnyDb, id: string): Promise<Company> {
+export async function archiveCompany(
+  db: AnyDb,
+  id: string
+): Promise<Company | undefined> {
   const [row] = await db
     .update(companies)
     .set({ archivedAt: new Date() })
@@ -68,7 +71,10 @@ export async function archiveCompany(db: AnyDb, id: string): Promise<Company> {
   return row;
 }
 
-export async function restoreCompany(db: AnyDb, id: string): Promise<Company> {
+export async function restoreCompany(
+  db: AnyDb,
+  id: string
+): Promise<Company | undefined> {
   const [row] = await db
     .update(companies)
     .set({ archivedAt: null })

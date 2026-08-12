@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { createCompanyAction, type ActionResult } from "@/app/companies/actions";
+import { createCompanyAction } from "@/app/companies/actions";
+import type { ActionResult } from "@/lib/company-mutations";
 
 export function NewCompanyForm() {
   const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(

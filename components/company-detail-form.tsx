@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { updateCompanyAction } from "@/app/companies/[id]/actions";
 import type { ActionResult } from "@/lib/company-mutations";
 import type { Company } from "@/db/schema";
@@ -27,9 +28,24 @@ export function CompanyDetailForm({ company }: { company: Company }) {
     updateCompanyAction,
     null
   );
+  const router = useRouter();
+  // Hide the last result once the user starts editing again.
+  const [dirty, setDirty] = useState(false);
+
+  // Each new action result is fresh, so surface it (clear dirty). On success,
+  // refresh the server component so the page heading reflects the new name.
+  useEffect(() => {
+    if (!state) return;
+    setDirty(false);
+    if (state.ok) router.refresh();
+  }, [state, router]);
 
   return (
-    <form action={formAction} className="mt-6 grid gap-4">
+    <form
+      action={formAction}
+      onInput={() => setDirty(true)}
+      className="mt-6 grid gap-4"
+    >
       <input type="hidden" name="id" value={company.id} />
       <label className="flex flex-col gap-1">
         <span className="font-medium text-sm">Nombre</span>
@@ -67,8 +83,12 @@ export function CompanyDetailForm({ company }: { company: Company }) {
         >
           {pending ? "Guardando…" : "Guardar cambios"}
         </button>
-        {state?.ok && <p className="text-sm text-green-600">Cambios guardados.</p>}
-        {state && !state.ok && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.ok && !dirty && (
+          <p className="text-sm text-green-600">Cambios guardados.</p>
+        )}
+        {state && !state.ok && !dirty && (
+          <p className="text-sm text-red-600">{state.error}</p>
+        )}
       </div>
     </form>
   );

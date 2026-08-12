@@ -97,10 +97,26 @@ describe("updateCompany", () => {
       notes: null,
     });
 
-    expect(updated.name).toBe("Después");
-    expect(updated.legalName).toBe("Después S.A. de C.V.");
-    expect(updated.industry).toBe("Acuicultura");
-    expect(updated.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+    expect(updated!.name).toBe("Después");
+    expect(updated!.legalName).toBe("Después S.A. de C.V.");
+    expect(updated!.industry).toBe("Acuicultura");
+    expect(updated!.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+  });
+
+  it("returns undefined when the id does not exist", async () => {
+    const db = await createTestDb();
+    const result = await updateCompany(db, "00000000-0000-0000-0000-000000000000", {
+      name: "Fantasma",
+      legalName: null,
+      industry: null,
+      companyType: null,
+      website: null,
+      taxId: null,
+      headquartersLocation: null,
+      sizeSegment: null,
+      notes: null,
+    });
+    expect(result).toBeUndefined();
   });
 });
 
@@ -110,10 +126,10 @@ describe("archiveCompany / restoreCompany", () => {
     const created = await createCompany(db, { name: "Camaronera" });
 
     const archived = await archiveCompany(db, created.id);
-    expect(archived.archivedAt).not.toBeNull();
+    expect(archived!.archivedAt).not.toBeNull();
 
     const restored = await restoreCompany(db, created.id);
-    expect(restored.archivedAt).toBeNull();
+    expect(restored!.archivedAt).toBeNull();
   });
 });
 

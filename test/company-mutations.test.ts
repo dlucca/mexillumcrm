@@ -57,4 +57,27 @@ describe("runUpdateCompany", () => {
     const result = await runUpdateCompany(db, formOf({ name: "X" }));
     expect(result.ok).toBe(false);
   });
+
+  it("returns an error when the company does not exist", async () => {
+    const db = await createTestDb();
+    const result = await runUpdateCompany(
+      db,
+      formOf({ id: "00000000-0000-0000-0000-000000000000", name: "Fantasma" })
+    );
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe("No se encontró la empresa");
+  });
+
+  it("returns a friendly error when the update throws", async () => {
+    const throwingDb = {
+      update() {
+        throw new Error("db down");
+      },
+    } as unknown as AnyDb;
+    const result = await runUpdateCompany(
+      throwingDb,
+      formOf({ id: "00000000-0000-0000-0000-000000000000", name: "X" })
+    );
+    expect(result).toEqual({ ok: false, error: "No se pudo actualizar la empresa" });
+  });
 });

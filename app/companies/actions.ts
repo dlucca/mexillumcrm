@@ -4,8 +4,6 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db/client";
 import { runCreateCompany, type ActionResult } from "@/lib/company-mutations";
 
-export type { ActionResult } from "@/lib/company-mutations";
-
 export async function createCompanyAction(
   _prev: ActionResult | null,
   formData: FormData

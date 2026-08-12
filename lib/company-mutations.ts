@@ -43,7 +43,10 @@ export async function runUpdateCompany(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
   try {
-    await updateCompany(db, id, parsed.data);
+    const row = await updateCompany(db, id, parsed.data);
+    if (!row) {
+      return { ok: false, error: "No se encontró la empresa" };
+    }
   } catch {
     return { ok: false, error: "No se pudo actualizar la empresa" };
   }
