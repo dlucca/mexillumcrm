@@ -376,11 +376,11 @@ El Kanban se organiza en **6 columnas = grupos**; cada card muestra su etapa pre
 | **Lead** | 1. Lead / sin contactar |
 | **Qualification** | 2. Outreach enviado · 3. Respondió / interesado |
 | **Solution** | 4. Diagnóstico web · 5. Webcall / discovery · 6. Propuesta en preparación |
-| **Commercial** | 7. Propuesta enviada · 8. Negociación / objeciones · 9. Propuesta aceptada · 10. Contrato enviado · 11. Contrato firmado |
-| **Delivery** | 12. Onboarding / kickoff |
+| **Commercial** | 7. Propuesta enviada · 8. Negociación / objeciones · 9. Propuesta aceptada |
+| **Delivery** | 10. Contrato enviado · 11. Contrato firmado · 12. Onboarding / kickoff |
 | **Active** | 13. Cliente activo |
 
-> **[A validar en Fase 0]** el reparto exacto de etapas por grupo (la tabla anterior es la propuesta base).
+> **[Decidido]** Reparto rebalanceado: las etapas de contrato viven en **Delivery** (junto con onboarding), de modo que ningún grupo queda sobrecargado. Commercial cubre propuesta y negociación; Delivery cubre contratación y arranque.
 
 ### 8.3 Reglas de etapa
 
@@ -396,7 +396,7 @@ El Kanban se organiza en **6 columnas = grupos**; cada card muestra su etapa pre
 `status` es independiente de `stage` y marcable desde cualquier etapa:
 
 - `open` — activo en el pipeline.
-- `won` — se asigna automáticamente al alcanzar la etapa **"Contrato firmado"**. **[A validar]** si el disparo debe ser "Propuesta aceptada" en su lugar.
+- `won` — **[Decidido]** se asigna automáticamente al alcanzar la etapa **"Contrato firmado"** (no se cuenta como ganado antes de la firma).
 - `lost` — marcable desde cualquier etapa; exige `lost_reason`. Conserva la `stage` donde murió.
 - `paused` — marcable desde cualquier etapa; conserva la `stage`.
 - `active_customer` — se asigna automáticamente en "Cliente activo".
@@ -512,7 +512,7 @@ Campos opcionales: Industry, Website, Contact role/title, Estimated value, Expec
 - Ver datos técnicos capturados manualmente, checklist de datos faltantes, documentos, propuestas, tareas y actividades.
 - Filtrar Projects por etapa, grupo, owner, solución, estado, fecha, valor y actividad reciente.
 - Archivar Projects perdidos o pausados.
-- Registrar motivo de pérdida cuando `status = lost`. Enum: `precio`, `timing`, `competencia`, `sin_presupuesto`, `sin_respuesta`, `no_viable_tecnico`, `otro` + nota opcional. **[A validar los valores en Fase 0]**
+- Registrar motivo de pérdida cuando `status = lost`. **[Decidido]** Enum: `precio`, `timing`, `competencia`, `sin_presupuesto`, `sin_respuesta`, `no_viable_tecnico`, `otro` + nota libre opcional.
 
 ### 10.4 Activities
 
@@ -970,12 +970,12 @@ Reglas:
 - ~~Next Action denormalizada vs derivada~~ → **derivada**.
 - ~~Proveedor de calendario Fase 2~~ → **cal.com**.
 - ~~solution_type crudo vs simplificado~~ → **ambos**.
+- ~~Reparto de etapas por grupo~~ → **rebalanceado** (contrato en Delivery, §8.2).
+- ~~Disparo de `won`~~ → **"Contrato firmado"** (§8.4).
+- ~~Valores de `lost_reason`~~ → **los 7 propuestos** (§10.3).
 
 ### 20.3 Decisiones abiertas (para Fase 0)
 
-- Reparto exacto de etapas por grupo (§8.2).
-- Disparo automático de `won`: "Contrato firmado" vs "Propuesta aceptada" (§8.4).
-- Valores finales de `lost_reason` (§10.3).
 - Datos técnicos mínimos exactos requeridos para avanzar a propuesta (§8.3).
 - Momento exacto para activar Gmail y cal.com sync en Fase 2.
 - Política de almacenamiento de cuerpo completo de emails (Fase 2).
