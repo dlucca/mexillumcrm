@@ -13,16 +13,16 @@ entera), así que se descompone; **este spec cubre el espinazo P3a**.
 
 ### Decisiones de alcance (brainstorming)
 
-- **Slice:** P3a project-scoped: tabla `tasks`, crear/completar/reabrir, Next Action
+- **Slice:** P3a project-scoped: tabla `tasks`, crear/completar tareas, Next Action
   derivada, alerta "sin próxima acción", todo en `/projects/[id]`. **Incluye** registrar
   una Activity `task` al completar (§10.5).
-- **`due_at` obligatorio:** toda Task lleva fecha límite → la Next Action queda siempre
+- **`due_date` obligatorio:** toda Task lleva fecha límite → la Next Action queda siempre
   bien definida y la alerta es inequívoca.
-- **Lifecycle:** crear + completar + reabrir. Sin editar título/fecha ni borrar en P3a.
-  Owner = creador (desde `auth.getUser()`), sin selector.
-- **Fecha:** input `<input type="date">` (fecha sin hora), guardada como timestamptz a
-  medianoche. Suficiente para ordenar la Next Action; hora precisa y "vencidas/hoy" reales
-  van con My Actions (P3b).
+- **Fecha sin hora:** la fecha límite es una fecha pura (columna `date`, NO timestamptz).
+  El usuario confirmó que las tasks nunca llevan hora. Input `<input type="date">`.
+- **Lifecycle:** crear + completar. **Sin reabrir** (el usuario confirmó que nunca
+  reabrirá una task completada), sin editar título/fecha, sin borrar en P3a. Owner =
+  creador (desde `auth.getUser()`), sin selector.
 
 ## 1. Tabla `tasks` (migración 0005)
 
@@ -35,36 +35,37 @@ Subconjunto forward-compatible (mismo criterio que P1/P2a).
 | `company_id` | uuid NOT NULL → companies | denormalizado desde el project (como activities) |
 | `owner_user_id` | uuid (nullable) | = creador, desde `auth.getUser()`; sin selector |
 | `title` | text NOT NULL | |
-| `due_at` | timestamptz NOT NULL | obligatorio |
-| `completed_at` | timestamptz (nullable) | null = abierta; seteado = completada. NO hay enum de status |
+| `due_date` | date NOT NULL (`mode: "string"`) | fecha pura `YYYY-MM-DD`, obligatoria (como `expected_close_date`) |
+| `completed_at` | timestamptz (nullable) | null = abierta; seteado = completada. Instante interno (no se muestra hora). NO hay enum de status |
 | `created_at` | timestamptz NOT NULL defaultNow | |
 | `updated_at` | timestamptz NOT NULL defaultNow `$onUpdate` | |
 
 **Índices:** `tasks_project_id_idx` `(project_id)`, `tasks_project_id_completed_at_idx`
-`(project_id, completed_at)`, `tasks_due_at_idx` `(due_at)` (§15.2), `tasks_company_id_idx`
+`(project_id, completed_at)`, `tasks_due_date_idx` `(due_date)` (§15.2), `tasks_company_id_idx`
 `(company_id)`.
 
 **RLS:** `.enableRLS()` → deny-all, consistente con las otras tablas.
 
 **Diferidos** (dependen de otras entidades/fuera del espinazo): `contact_id`, tasks sobre
-Company/Contact sin project (project_id sería nullable), `notes`/descripción, `archived_at`,
+Company/Contact sin project (project_id nullable), `notes`/descripción, `archived_at`,
 prioridad. Schema exporta `Task` / `NewTask`.
 
 ## 2. Derivación Next Action + validación (puro)
 
 ### 2.1 `lib/tasks.ts` — `nextActionTask`
 
+`due_date` es un string `YYYY-MM-DD`, que ordena lexicográficamente = cronológicamente,
+así que se compara directo (sin parsear a Date).
+
 ```ts
 import type { Task } from "@/db/schema";
 
-// La "próxima acción" de un Project = la Task abierta (completed_at == null) con due_at
+// La "próxima acción" de un Project = la Task abierta (completed_at == null) con due_date
 // más próximo. null si no hay ninguna abierta.
 export function nextActionTask(tasks: Task[]): Task | null {
   const open = tasks.filter((t) => t.completedAt == null);
   if (open.length === 0) return null;
-  return open.reduce((soonest, t) =>
-    t.dueAt.getTime() < soonest.dueAt.getTime() ? t : soonest
-  );
+  return open.reduce((soonest, t) => (t.dueDate < soonest.dueDate ? t : soonest));
 }
 ```
 
@@ -73,7 +74,7 @@ La alerta "sin próxima acción" la calcula la página:
 
 ### 2.2 `lib/validation.ts` — `taskCreateSchema`
 
-`due_at` llega como `YYYY-MM-DD` desde `<input type="date">`. Se agrega un helper
+`due_date` llega como `YYYY-MM-DD` desde `<input type="date">`. Se agrega un helper
 `requiredDate` (espejo del `optionalDate` existente, pero no-nullable):
 
 ```ts
@@ -88,7 +89,7 @@ export const taskCreateSchema = z.object({
     (v) => (typeof v === "string" ? v.trim() : ""),
     z.string().min(1, "El título es obligatorio")
   ),
-  dueAt: requiredDate, // string YYYY-MM-DD; el glue lo convierte a Date
+  dueDate: requiredDate, // string YYYY-MM-DD; se inserta tal cual (columna date mode string)
 });
 
 export type TaskCreateInput = z.infer<typeof taskCreateSchema>;
@@ -107,16 +108,16 @@ export type NewTaskInput = {
   companyId: string;
   ownerUserId: string | null;
   title: string;
-  dueAt: Date;
+  dueDate: string; // YYYY-MM-DD
 };
 
 createTask(db, input): Promise<Task>
 getTask(db, id): Promise<Task | undefined>
-listTasksForProject(db, projectId): Promise<Task[]>   // orden: due_at asc
+listTasksForProject(db, projectId): Promise<Task[]>   // orden: due_date asc
 ```
 
-Sin `completeTask`/`reopenTask` en la capa pura: la reapertura es un update simple que
-hace el glue; el completado es compuesto (task + Activity) y va en transacción en el glue.
+Sin `reopenTask` (no hay reapertura). El completado es compuesto (task + Activity) y va en
+transacción en el glue, no en la capa pura.
 
 ## 4. Glue — `lib/task-mutations.ts`
 
@@ -124,66 +125,69 @@ Patrón de `lib/activity-mutations.ts` / `lib/project-mutations.ts`.
 
 - **`runCreateTask(db, formData, ownerUserId)`**: valida `taskCreateSchema` → `getProject`
   (resuelve `company_id`; si no existe → `{ ok:false, error:"No se encontró el proyecto" }`)
-  → `createTask` con `dueAt: new Date(parsed.dueAt)`, `ownerUserId`. Devuelve `ActionResult`.
+  → `createTask` con `dueDate: parsed.dueDate` (string), `ownerUserId`. Devuelve `ActionResult`.
 - **`runCompleteTask(db, formData, actorUserId)`**: valida `taskId` (uuid) →
   `db.transaction`:
-  - `getTask`/select; si no existe → `{ ok:false, error:"No se encontró la tarea" }`.
-  - si `completedAt != null` → no-op `{ ok:true }` (sin Activity duplicada).
+  - select/`getTask`; si no existe → `{ ok:false, error:"No se encontró la tarea" }`.
+  - si `completedAt != null` → no-op `{ ok:true }` (sin Activity duplicada, sin re-setear).
   - si abierta → `tx.update(tasks).set({ completedAt: new Date() })` **e**
     `tx.insert(activities).values({ companyId, projectId, userId: actorUserId,
     type:"task", direction:"internal", subject:null, body: task.title, source:"system",
     metadata: { taskId: task.id, event: "completed" } })`.
   - outer try/catch → `{ ok:false, error:"No se pudo completar la tarea" }`.
-- **`runReopenTask(db, formData)`**: valida `taskId` → `update(tasks).set({ completedAt: null })`
-  where id; si 0 filas → `{ ok:false, error:"No se encontró la tarea" }`. Sin Activity (las
-  Activities de completado son inmutables y permanecen).
 
 `taskId` se lee de `formData.get("taskId")` y se valida con `z.string().uuid()`.
+
+No hay `runReopenTask`.
 
 ## 5. Server actions (`app/projects/actions.ts`)
 
 - **`createTaskAction(prev, formData)`**: `auth.getUser()` → `runCreateTask(db, formData, user?.id ?? null)`
   → en éxito `revalidatePath('/projects/${projectId}')` (projectId validado uuid).
-- **`completeTaskAction(formData)`** y **`reopenTaskAction(formData)`**: form actions simples
-  (patrón `archiveContactAction`): `auth.getUser()` (complete pasa el actor) →
-  `runCompleteTask`/`runReopenTask` → `revalidatePath('/projects/${projectId}')`. `reopen`
-  no necesita actor.
+- **`completeTaskAction(formData)`**: form action simple (patrón `archiveContactAction`):
+  `auth.getUser()` → `runCompleteTask(db, formData, user?.id ?? null)` →
+  `revalidatePath('/projects/${projectId}')`.
+
+No hay `reopenTaskAction`.
 
 ## 6. UI en `/projects/[id]` — sección "Tareas" (encima de "Actividad")
 
 `page.tsx` carga `listTasksForProject(db, id)` y computa `nextActionTask`.
 
 - **Banner Next Action**: si hay task abierta → "Próxima acción: {título} — vence {fecha}"
-  (formato es-MX de la fecha). Si `project.status === "open"` y no hay task abierta →
-  alerta "⚠ Sin próxima acción".
+  (la fecha `YYYY-MM-DD` formateada es-MX, solo fecha). Si `project.status === "open"` y no
+  hay task abierta → alerta "⚠ Sin próxima acción".
 - **`NewTaskForm`** (client, add-form como `NewNoteForm`: `useActionState` + reset +
-  `router.refresh()`): `title` + `<input type="date" name="dueAt">` + hidden `projectId`.
+  `router.refresh()`): `title` + `<input type="date" name="dueDate">` + hidden `projectId`.
   Solo visible si el proyecto no está archivado.
-- **`TaskList`** (server component): tareas abiertas (por `due_at asc`) con un
+- **`TaskList`** (server component): tareas abiertas (por `due_date asc`) con un
   `<form action={completeTaskAction}>` (hidden taskId + projectId, botón "Completar");
-  tareas completadas (atenuadas/tachadas) con `<form action={reopenTaskAction}>` botón
-  "Reabrir". Cada fila muestra título + fecha límite.
+  tareas completadas atenuadas/tachadas (sin acción — no hay reabrir). Cada fila muestra
+  título + fecha límite.
 
 El completado también aparece en la timeline de "Actividad" (Activity `task`, renderizada
 por el `activityHeadline` extendido).
 
+Formato de fecha: un formatter es-MX solo-fecha para `YYYY-MM-DD` (p.ej. en `lib/tasks.ts`
+`formatDueDate(dateStr)` con `Intl.DateTimeFormat("es-MX", { dateStyle: "medium" })` sobre
+`new Date(dateStr + "T00:00:00")` para evitar corrimiento de zona).
+
 ## 7. Tests (Vitest + PGlite, TDD — test primero)
 
 **Puros:**
-- `nextActionTask`: elige la abierta con `dueAt` más próximo; ignora completadas; null si no
-  hay abiertas; con una sola abierta la devuelve.
-- `taskCreateSchema`: rechaza title vacío, dueAt ausente/mal formado, projectId no-uuid;
+- `nextActionTask`: elige la abierta con `due_date` más próximo; ignora completadas; null si
+  no hay abiertas; con una sola abierta la devuelve.
+- `taskCreateSchema`: rechaza title vacío, dueDate ausente/mal formado, projectId no-uuid;
   acepta y trima válidos.
 - `activityHeadline` para `type="task"` → devuelve el body; sin body → label "Tarea".
 
 **Datos/glue (PGlite):**
-- `createTask` inserta; `listTasksForProject` ordena `due_at asc` y scopea por `projectId`.
-- `runCreateTask`: resuelve `company_id` desde el project, setea owner y `dueAt` como Date;
+- `createTask` inserta; `listTasksForProject` ordena `due_date asc` y scopea por `projectId`.
+- `runCreateTask`: resuelve `company_id` desde el project, setea owner y `due_date` (string);
   rechaza project inexistente; rechaza title vacío.
 - `runCompleteTask`: setea `completed_at` + inserta exactamente 1 Activity `task` con
-  `body=title` y `metadata.taskId`; idempotente si ya completada (no crea Activity dup, y no
+  `body=title` y `metadata.taskId`; idempotente si ya completada (no crea Activity dup, no
   re-setea); not-found → error; atómico (rollback si falla el insert de Activity).
-- `runReopenTask`: setea `completed_at=null`; no crea Activity; not-found → error.
 
 ## 8. Migración + deploy
 
@@ -203,4 +207,5 @@ scopea por `id`/`projectId` sin ownership. Se cierra con el slice de RLS.
 - Tasks sobre Company/Contact sin project (project_id nullable).
 - Crear Task directamente desde una Activity (§10.5).
 - Editar título/fecha, borrar/archivar task, prioridad, notes.
+- Reabrir tasks completadas (el usuario no lo quiere).
 - Sincronización cal.com.
