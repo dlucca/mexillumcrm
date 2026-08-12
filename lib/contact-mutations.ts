@@ -1,0 +1,27 @@
+import type { AnyDb } from "@/db/types";
+import { createContact } from "@/db/contacts";
+import { contactCreateSchema } from "@/lib/validation";
+import type { ActionResult } from "@/lib/company-mutations";
+
+export async function runCreateContact(
+  db: AnyDb,
+  formData: FormData
+): Promise<ActionResult> {
+  const parsed = contactCreateSchema.safeParse({
+    companyId: formData.get("companyId"),
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    role: formData.get("role"),
+    notes: formData.get("notes"),
+  });
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  try {
+    await createContact(db, parsed.data);
+  } catch {
+    return { ok: false, error: "No se pudo crear el contacto" };
+  }
+  return { ok: true };
+}

@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { companyCreateSchema, companyUpdateSchema } from "@/lib/validation";
+import {
+  companyCreateSchema,
+  companyUpdateSchema,
+  contactCreateSchema,
+} from "@/lib/validation";
 
 describe("companyCreateSchema", () => {
   it("rejects an empty name", () => {
@@ -34,6 +38,37 @@ describe("companyUpdateSchema", () => {
       expect(r.data.website).toBeNull();
       expect(r.data.notes).toBe("hola");
       expect(r.data.legalName).toBeNull();
+    }
+  });
+});
+
+describe("contactCreateSchema", () => {
+  const validId = "00000000-0000-0000-0000-000000000000";
+
+  it("requires a non-empty name", () => {
+    const r = contactCreateSchema.safeParse({ companyId: validId, name: "   " });
+    expect(r.success).toBe(false);
+  });
+
+  it("rejects a non-uuid companyId", () => {
+    const r = contactCreateSchema.safeParse({ companyId: "nope", name: "Ana" });
+    expect(r.success).toBe(false);
+  });
+
+  it("normalizes empty optionals to null and keeps real values", () => {
+    const r = contactCreateSchema.safeParse({
+      companyId: validId,
+      name: "Ana",
+      email: "  ana@example.com  ",
+      phone: "",
+      role: "   ",
+    });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data.email).toBe("ana@example.com");
+      expect(r.data.phone).toBeNull();
+      expect(r.data.role).toBeNull();
+      expect(r.data.notes).toBeNull();
     }
   });
 });
