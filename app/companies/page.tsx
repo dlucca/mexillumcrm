@@ -22,9 +22,14 @@ export default async function CompaniesPage({
     <main className="mx-auto max-w-4xl p-8">
       <div className="flex items-center justify-between">
         <h1 className="font-display font-bold text-4xl tracking-display">Empresas</h1>
-        <form action={signOut}>
-          <button className="font-semibold text-sm underline">Salir</button>
-        </form>
+        <div className="flex items-center gap-4">
+          <Link href="/projects" className="text-sm underline">
+            Proyectos
+          </Link>
+          <form action={signOut}>
+            <button className="font-semibold text-sm underline">Salir</button>
+          </form>
+        </div>
       </div>
 
       <div className="mt-6 flex gap-4 text-sm">

@@ -7,6 +7,9 @@ import { CompanyArchiveButton } from "@/components/company-archive-button";
 import { listContacts } from "@/db/contacts";
 import { NewContactForm } from "@/components/new-contact-form";
 import { ContactTable } from "@/components/contact-table";
+import { listProjects } from "@/db/projects";
+import { NewProjectForm } from "@/components/new-project-form";
+import { ProjectTable } from "@/components/project-table";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +18,10 @@ export default async function CompanyDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ contactsArchived?: string }>;
+  searchParams: Promise<{ contactsArchived?: string; projectsArchived?: string }>;
 }) {
   const { id } = await params;
-  const { contactsArchived } = await searchParams;
+  const { contactsArchived, projectsArchived } = await searchParams;
   const company = await getCompany(db, id);
   if (!company) notFound();
 
@@ -27,6 +30,20 @@ export default async function CompanyDetailPage({
   const contactRows = await listContacts(db, company.id, {
     archived: showArchivedContacts,
   });
+
+  const showArchivedProjects = projectsArchived === "1";
+  const projectRows = await listProjects(db, company.id, {
+    archived: showArchivedProjects,
+  });
+
+  const base = `/companies/${company.id}`;
+  const withParams = (contacts: boolean, projects: boolean) => {
+    const p = new URLSearchParams();
+    if (contacts) p.set("contactsArchived", "1");
+    if (projects) p.set("projectsArchived", "1");
+    const qs = p.toString();
+    return qs ? `${base}?${qs}` : base;
+  };
 
   return (
     <main className="mx-auto max-w-4xl p-8">
@@ -48,13 +65,13 @@ export default async function CompanyDetailPage({
         <h2 className="font-display font-bold text-2xl tracking-display">Contactos</h2>
         <div className="mt-4 flex gap-4 text-sm">
           <Link
-            href={`/companies/${company.id}`}
+            href={withParams(false, showArchivedProjects)}
             className={showArchivedContacts ? "underline" : "font-semibold"}
           >
             Activos
           </Link>
           <Link
-            href={`/companies/${company.id}?contactsArchived=1`}
+            href={withParams(true, showArchivedProjects)}
             className={showArchivedContacts ? "font-semibold" : "underline"}
           >
             Archivados
@@ -62,6 +79,26 @@ export default async function CompanyDetailPage({
         </div>
         {!showArchivedContacts && <NewContactForm companyId={company.id} />}
         <ContactTable data={contactRows} archived={showArchivedContacts} />
+      </section>
+
+      <section className="mt-12">
+        <h2 className="font-display font-bold text-2xl tracking-display">Proyectos</h2>
+        <div className="mt-4 flex gap-4 text-sm">
+          <Link
+            href={withParams(showArchivedContacts, false)}
+            className={showArchivedProjects ? "underline" : "font-semibold"}
+          >
+            Activos
+          </Link>
+          <Link
+            href={withParams(showArchivedContacts, true)}
+            className={showArchivedProjects ? "font-semibold" : "underline"}
+          >
+            Archivados
+          </Link>
+        </div>
+        {!showArchivedProjects && <NewProjectForm companyId={company.id} />}
+        <ProjectTable data={projectRows} archived={showArchivedProjects} />
       </section>
     </main>
   );
