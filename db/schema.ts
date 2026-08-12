@@ -67,7 +67,7 @@ export const projects = pgTable(
       .notNull()
       .references(() => companies.id),
     name: text("name").notNull(),
-    ownerUserId: text("owner_user_id"),
+    ownerUserId: uuid("owner_user_id"),
     plantName: text("plant_name"),
     locationAddress: text("location_address"),
     city: text("city"),

@@ -17,7 +17,7 @@ describe("runCreateProject", () => {
     const result = await runCreateProject(
       db,
       formOf({ companyId: company.id, name: "Planta Norte", stage: "propuesta_enviada" }),
-      "user-123"
+      "11111111-1111-1111-1111-111111111111"
     );
     expect(result).toEqual({ ok: true });
     const [row] = await listProjects(db, company.id);
@@ -25,7 +25,7 @@ describe("runCreateProject", () => {
     expect(row.stage).toBe("propuesta_enviada");
     expect(row.stageGroup).toBe("commercial");
     expect(row.status).toBe("open");
-    expect(row.ownerUserId).toBe("user-123");
+    expect(row.ownerUserId).toBe("11111111-1111-1111-1111-111111111111");
   });
 
   it("aplica defaults cuando faltan stage/solution", async () => {
