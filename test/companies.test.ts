@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { eq } from "drizzle-orm";
 import { createTestDb } from "@/test/db";
-import { createCompany, listCompanies } from "@/db/companies";
+import {
+  createCompany,
+  listCompanies,
+  getCompany,
+  updateCompany,
+  archiveCompany,
+  restoreCompany,
+} from "@/db/companies";
 import { companies } from "@/db/schema";
 
 describe("createCompany", () => {
@@ -50,5 +57,80 @@ describe("listCompanies", () => {
     const rows = await listCompanies(db);
     expect(rows.map((r) => r.id)).toEqual([newest.id, middle.id, oldest.id]);
     expect(rows.map((r) => r.name)).toEqual(["Newest", "Middle", "Oldest"]);
+  });
+});
+
+describe("getCompany", () => {
+  it("returns the row when it exists", async () => {
+    const db = await createTestDb();
+    const created = await createCompany(db, { name: "Naviera Cortés" });
+    const found = await getCompany(db, created.id);
+    expect(found?.id).toBe(created.id);
+    expect(found?.name).toBe("Naviera Cortés");
+  });
+
+  it("returns undefined when it does not exist", async () => {
+    const db = await createTestDb();
+    const found = await getCompany(db, "00000000-0000-0000-0000-000000000000");
+    expect(found).toBeUndefined();
+  });
+});
+
+describe("updateCompany", () => {
+  it("updates business fields and bumps updatedAt", async () => {
+    const db = await createTestDb();
+    const past = new Date("2020-01-01T00:00:00Z");
+    const [row] = await db
+      .insert(companies)
+      .values({ name: "Antes", createdAt: past, updatedAt: past })
+      .returning();
+
+    const updated = await updateCompany(db, row.id, {
+      name: "Después",
+      legalName: "Después S.A. de C.V.",
+      industry: "Acuicultura",
+      companyType: null,
+      website: null,
+      taxId: null,
+      headquartersLocation: null,
+      sizeSegment: null,
+      notes: null,
+    });
+
+    expect(updated.name).toBe("Después");
+    expect(updated.legalName).toBe("Después S.A. de C.V.");
+    expect(updated.industry).toBe("Acuicultura");
+    expect(updated.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+  });
+});
+
+describe("archiveCompany / restoreCompany", () => {
+  it("sets and clears archivedAt", async () => {
+    const db = await createTestDb();
+    const created = await createCompany(db, { name: "Camaronera" });
+
+    const archived = await archiveCompany(db, created.id);
+    expect(archived.archivedAt).not.toBeNull();
+
+    const restored = await restoreCompany(db, created.id);
+    expect(restored.archivedAt).toBeNull();
+  });
+});
+
+describe("listCompanies with archived option", () => {
+  it("lists only archived companies when archived: true", async () => {
+    const db = await createTestDb();
+    const active = await createCompany(db, { name: "Activa" });
+    const gone = await createCompany(db, { name: "Archivada" });
+    await archiveCompany(db, gone.id);
+
+    const activos = await listCompanies(db);
+    expect(activos.map((r) => r.name)).toEqual(["Activa"]);
+
+    const archivados = await listCompanies(db, { archived: true });
+    expect(archivados.map((r) => r.name)).toEqual(["Archivada"]);
+
+    // sanity: active id present only in the active list
+    expect(activos.map((r) => r.id)).toContain(active.id);
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   createColumnHelper,
   flexRender,
@@ -7,26 +8,69 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import type { Company } from "@/db/schema";
+import { restoreCompanyAction } from "@/app/companies/[id]/actions";
 
 const columnHelper = createColumnHelper<Company>();
 
-const columns = [
-  columnHelper.accessor("name", { header: "Nombre" }),
-  columnHelper.accessor("industry", {
-    header: "Industria",
-    cell: (info) => info.getValue() ?? "—",
-  }),
-  columnHelper.accessor("createdAt", {
-    header: "Creada",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString("es-MX"),
-  }),
-];
+function buildColumns(archived: boolean) {
+  const base = [
+    columnHelper.accessor("name", {
+      header: "Nombre",
+      cell: (info) => (
+        <Link
+          href={`/companies/${info.row.original.id}`}
+          className="font-medium underline"
+        >
+          {info.getValue()}
+        </Link>
+      ),
+    }),
+    columnHelper.accessor("industry", {
+      header: "Industria",
+      cell: (info) => info.getValue() ?? "—",
+    }),
+    columnHelper.accessor("createdAt", {
+      header: "Creada",
+      cell: (info) => new Date(info.getValue()).toLocaleDateString("es-MX"),
+    }),
+  ];
 
-export function CompanyTable({ data }: { data: Company[] }) {
-  const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
+  if (!archived) return base;
+
+  return [
+    ...base,
+    columnHelper.display({
+      id: "actions",
+      header: "",
+      cell: (info) => (
+        <form action={restoreCompanyAction}>
+          <input type="hidden" name="id" value={info.row.original.id} />
+          <button className="text-sm underline">Restaurar</button>
+        </form>
+      ),
+    }),
+  ];
+}
+
+export function CompanyTable({
+  data,
+  archived = false,
+}: {
+  data: Company[];
+  archived?: boolean;
+}) {
+  const table = useReactTable({
+    data,
+    columns: buildColumns(archived),
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   if (data.length === 0) {
-    return <p className="mt-8 text-sm text-neutral-500">Aún no hay empresas.</p>;
+    return (
+      <p className="mt-8 text-sm text-neutral-500">
+        {archived ? "No hay empresas archivadas." : "Aún no hay empresas."}
+      </p>
+    );
   }
 
   return (
