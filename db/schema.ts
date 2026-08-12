@@ -137,3 +137,34 @@ export const activities = pgTable(
 
 export type Activity = typeof activities.$inferSelect;
 export type NewActivity = typeof activities.$inferInsert;
+
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => companies.id),
+    ownerUserId: uuid("owner_user_id"),
+    title: text("title").notNull(),
+    dueDate: date("due_date", { mode: "string" }).notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [
+    index("tasks_project_id_idx").on(t.projectId),
+    index("tasks_project_id_completed_at_idx").on(t.projectId, t.completedAt),
+    index("tasks_due_date_idx").on(t.dueDate),
+    index("tasks_company_id_idx").on(t.companyId),
+  ]
+).enableRLS();
+
+export type Task = typeof tasks.$inferSelect;
+export type NewTask = typeof tasks.$inferInsert;
