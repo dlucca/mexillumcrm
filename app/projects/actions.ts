@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { archiveProject, restoreProject } from "@/db/projects";
 import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
 import { runCreateNote } from "@/lib/activity-mutations";
+import { runCreateTask, runCompleteTask } from "@/lib/task-mutations";
 import type { ActionResult } from "@/lib/company-mutations";
 
 const idSchema = z.string().uuid();
@@ -76,4 +77,30 @@ export async function createNoteAction(
     if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
   }
   return result;
+}
+
+export async function createTaskAction(
+  _prev: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const result = await runCreateTask(db, formData, user?.id ?? null);
+  if (result.ok) {
+    const projectId = idSchema.safeParse(formData.get("projectId"));
+    if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
+  }
+  return result;
+}
+
+export async function completeTaskAction(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  await runCompleteTask(db, formData, user?.id ?? null);
+  const projectId = idSchema.safeParse(formData.get("projectId"));
+  if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
 }
