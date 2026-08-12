@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mexillum CRM — Specimen Tipográfico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --font-body: "Barlow", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --text-2xs: 0.6875rem;
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 2rem;
+    --text-4xl: 2.5rem;
+    --text-5xl: 3.25rem;
+
+    --tracking-eyebrow: 0.12em;
+    --tracking-label: 0.08em;
+
+    /* Neutros tintados en cálido + acento solar (placeholder) */
+    --bg: oklch(0.984 0.005 80);
+    --surface: oklch(1 0.002 90);
+    --ink: oklch(0.24 0.012 60);
+    --muted: oklch(0.52 0.015 62);
+    --faint: oklch(0.66 0.012 65);
+    --line: oklch(0.905 0.008 72);
+    --line-strong: oklch(0.84 0.01 70);
+    --solar: oklch(0.70 0.16 62);
+    --solar-ink: oklch(0.42 0.12 55);
+    --solar-wash: oklch(0.95 0.04 80);
+    --green: oklch(0.62 0.13 150);
+    --red: oklch(0.58 0.17 22);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: oklch(0.19 0.01 65);
+      --surface: oklch(0.235 0.012 65);
+      --ink: oklch(0.94 0.008 82);
+      --muted: oklch(0.72 0.012 78);
+      --faint: oklch(0.58 0.012 70);
+      --line: oklch(0.32 0.012 68);
+      --line-strong: oklch(0.42 0.014 68);
+      --solar: oklch(0.78 0.15 68);
+      --solar-ink: oklch(0.82 0.13 70);
+      --solar-wash: oklch(0.30 0.05 68);
+      --green: oklch(0.72 0.14 152);
+      --red: oklch(0.68 0.16 24);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.55;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem) 5rem; }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-2xs);
+    line-height: 1.3;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--solar-ink);
+  }
+  h1, .h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-4xl);
+    line-height: 1.03;
+    letter-spacing: -0.005em;
+    margin: 0.15rem 0 0;
+  }
+  h2, .h2 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-3xl); line-height: 1.08; margin: 0; }
+  h3, .h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xl); line-height: 1.1; margin: 0; }
+  .card-title { font-family: var(--font-display); font-weight: 600; font-size: var(--text-xl); line-height: 1.2; margin: 0; }
+  .lead { font-size: var(--text-lg); line-height: 1.45; color: var(--muted); max-width: 62ch; }
+  p { max-width: 68ch; }
+  .body-sm { font-size: var(--text-sm); line-height: 1.45; }
+  .muted { color: var(--muted); }
+  .faint { color: var(--faint); }
+
+  .col-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .data { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  header.page {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem;
+    padding-bottom: 1.5rem; margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .spec-tag {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--faint);
+    border: 1px solid var(--line); border-radius: 999px; padding: 0.25rem 0.6rem;
+  }
+
+  section { margin-top: 3.25rem; }
+  .section-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 1.4rem; }
+  .section-head .num { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--solar-ink); }
+  .section-head .rule { flex: 1; height: 1px; background: var(--line); }
+
+  /* KPI row */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .kpi { background: var(--surface); padding: 1.4rem 1.5rem 1.6rem; }
+  .kpi .val { font-family: var(--font-display); font-weight: 700; font-size: var(--text-5xl); line-height: 1; letter-spacing: -0.01em; margin-top: 0.5rem; }
+  .kpi .val .cur { font-size: var(--text-xl); color: var(--muted); font-weight: 600; }
+  .kpi .delta { font-family: var(--font-mono); font-size: var(--text-sm); margin-top: 0.5rem; }
+  .up { color: var(--green); } .down { color: var(--red); }
+
+  /* Pipeline card */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem 1.35rem 1.35rem; display: flex; flex-direction: column; gap: 0.85rem; }
+  .pcard .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+  .stage {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--solar-ink);
+    background: var(--solar-wash); border-radius: 6px; padding: 0.2rem 0.5rem; white-space: nowrap;
+  }
+  .pcard .amount { font-family: var(--font-mono); font-weight: 500; font-size: var(--text-xl); font-variant-numeric: tabular-nums; }
+  .pcard .amount .cur { font-size: var(--text-sm); color: var(--muted); }
+  .pcard .usd { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--faint); font-variant-numeric: tabular-nums; }
+  .meta { display: flex; gap: 1.25rem; padding-top: 0.85rem; border-top: 1px solid var(--line); }
+  .meta .k { font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xs); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--faint); }
+  .meta .v { font-family: var(--font-mono); font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
+  .next { font-size: var(--text-sm); color: var(--muted); }
+  .next b { color: var(--ink); font-weight: 600; }
+
+  /* Table */
+  .tbl-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; overflow-x: auto; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th { text-align: left; padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--line-strong); background: color-mix(in oklch, var(--surface), var(--bg) 55%); }
+  td { padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--line); font-size: var(--text-sm); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; }
+  .proj { font-weight: 500; }
+  .proj .id { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--faint); display: block; }
+  .score { font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .score .max { color: var(--faint); font-weight: 400; }
+  .amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .bar { height: 5px; border-radius: 3px; background: var(--line); position: relative; overflow: hidden; margin-top: 4px; }
+  .bar > i { position: absolute; inset: 0 auto 0 0; background: var(--solar); border-radius: 3px; }
+
+  /* Scale ruler */
+  .scale-row { display: flex; align-items: baseline; gap: 1.25rem; padding: 0.55rem 0; border-bottom: 1px dashed var(--line); }
+  .scale-row .tok { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); width: 8.5rem; flex: none; }
+  .scale-row .samp { font-family: var(--font-display); font-weight: 700; line-height: 1; color: var(--ink); white-space: nowrap; }
+
+  .families { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .fam { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.35rem 1.4rem 1.5rem; }
+  .fam .name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-2xl); }
+  .fam .role { font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xs); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--solar-ink); margin-bottom: 0.6rem; }
+  .fam .aa { font-size: 3.2rem; line-height: 1; margin: 0.4rem 0 0.6rem; }
+  .fam.mono .aa, .fam.mono .name { font-family: var(--font-mono); }
+  .fam.body .aa, .fam.body .name { font-family: var(--font-body); }
+  .fam .glyphs { font-size: var(--text-sm); color: var(--muted); }
+  .fam.mono .glyphs { font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <div>
+      <div class="eyebrow">Sistema Tipográfico · Panel comercial</div>
+      <h1>Mexillum CRM</h1>
+      <p class="lead" style="margin:.6rem 0 0;">Barlow Condensed para títulos, Barlow para cuerpo y UI, JetBrains Mono para datos. Dirección industrial técnica.</p>
+    </div>
+    <span class="spec-tag">v0.1 · 12 ago 2026</span>
+  </header>
+
+  <!-- FAMILIES -->
+  <section>
+    <div class="section-head"><span class="num">01</span><h3>Las tres familias</h3><span class="rule"></span></div>
+    <div class="families">
+      <div class="fam">
+        <div class="role">Display · Títulos</div>
+        <div class="name">Barlow Condensed</div>
+        <div class="aa" style="font-weight:700">Aa Bg</div>
+        <div class="glyphs">Señalética industrial · condensada · 600 / 700</div>
+      </div>
+      <div class="fam body">
+        <div class="role">Cuerpo · UI</div>
+        <div class="name">Barlow</div>
+        <div class="aa">Aa Bg</div>
+        <div class="glyphs">Humanista · legible · 400 / 500 / 600</div>
+      </div>
+      <div class="fam mono">
+        <div class="role">Datos · Cifras</div>
+        <div class="name">JetBrains&nbsp;Mono</div>
+        <div class="aa">0123</div>
+        <div class="glyphs">Tabular · alineación perfecta · 400 / 500</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section>
+    <div class="section-head"><span class="num">02</span><h3>KPI hero — dashboard del CEO</h3><span class="rule"></span></div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="col-label">Pipeline total</div>
+        <div class="val">$48.2<span class="cur">M MXN</span></div>
+        <div class="delta up">▲ +18% vs. mes anterior</div>
+      </div>
+      <div class="kpi">
+        <div class="col-label">Proyectos activos</div>
+        <div class="val">37</div>
+        <div class="delta up">▲ +4 nuevos</div>
+      </div>
+      <div class="kpi">
+        <div class="col-label">Sin siguiente acción</div>
+        <div class="val" style="color:var(--red)">3</div>
+        <div class="delta down">▼ requieren atención</div>
+      </div>
+      <div class="kpi">
+        <div class="col-label">Conversión</div>
+        <div class="val">34<span class="cur">%</span></div>
+        <div class="delta up">▲ +6 pts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIPELINE CARDS -->
+  <section>
+    <div class="section-head"><span class="num">03</span><h3>Cards de pipeline</h3><span class="rule"></span></div>
+    <div class="cards">
+      <div class="pcard">
+        <div class="top">
+          <h4 class="card-title">Grupo Alcázar — Planta Saltillo</h4>
+          <span class="stage">4/13 · Propuesta</span>
+        </div>
+        <div>
+          <div class="amount">$3,240,000 <span class="cur">MXN</span></div>
+          <div class="usd">≈ $180,000 USD · TC 18.00</div>
+        </div>
+        <div class="next"><b>Siguiente:</b> Enviar propuesta técnica · vence <span class="data">14 ago</span></div>
+        <div class="meta">
+          <div><div class="k">Score</div><div class="v">82/100</div></div>
+          <div><div class="k">Solución</div><div class="v" style="font-family:var(--font-body)">Solar + BESS</div></div>
+          <div><div class="k">Responsable</div><div class="v" style="font-family:var(--font-body)">A. Ruiz</div></div>
+        </div>
+      </div>
+      <div class="pcard">
+        <div class="top">
+          <h4 class="card-title">Textiles del Norte S.A.</h4>
+          <span class="stage">7/13 · Negociación</span>
+        </div>
+        <div>
+          <div class="amount">$12,750,000 <span class="cur">MXN</span></div>
+          <div class="usd">≈ $708,300 USD · TC 18.00</div>
+        </div>
+        <div class="next"><b>Siguiente:</b> Llamada de cierre · vence <span class="data">12 ago</span></div>
+        <div class="meta">
+          <div><div class="k">Score</div><div class="v">91/100</div></div>
+          <div><div class="k">Solución</div><div class="v" style="font-family:var(--font-body)">Solar</div></div>
+          <div><div class="k">Responsable</div><div class="v" style="font-family:var(--font-body)">M. Peña</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLE -->
+  <section>
+    <div class="section-head"><span class="num">04</span><h3>Tabla de proyectos — datos en mono tabular</h3><span class="rule"></span></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-label">Proyecto</th>
+            <th class="col-label">Etapa</th>
+            <th class="col-label num">Valor MXN</th>
+            <th class="col-label num">Score</th>
+            <th class="col-label num">Actualizado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="proj">Grupo Alcázar — Saltillo<span class="id">PRJ-0042</span></td>
+            <td><span class="data faint">04</span> Propuesta</td>
+            <td class="num amt">$3,240,000</td>
+            <td class="num"><span class="score">82<span class="max">/100</span></span><div class="bar"><i style="width:82%"></i></div></td>
+            <td class="num data muted">12 ago 2026</td>
+          </tr>
+          <tr>
+            <td class="proj">Textiles del Norte<span class="id">PRJ-0038</span></td>
+            <td><span class="data faint">07</span> Negociación</td>
+            <td class="num amt">$12,750,000</td>
+            <td class="num"><span class="score">91<span class="max">/100</span></span><div class="bar"><i style="width:91%"></i></div></td>
+            <td class="num data muted">11 ago 2026</td>
+          </tr>
+          <tr>
+            <td class="proj">Minera El Roble<span class="id">PRJ-0051</span></td>
+            <td><span class="data faint">02</span> Discovery</td>
+            <td class="num amt">$890,000</td>
+            <td class="num"><span class="score">64<span class="max">/100</span></span><div class="bar"><i style="width:64%"></i></div></td>
+            <td class="num data muted">09 ago 2026</td>
+          </tr>
+          <tr>
+            <td class="proj">Hospital Regional Bajío<span class="id">PRJ-0047</span></td>
+            <td><span class="data faint">05</span> Ingeniería</td>
+            <td class="num amt">$28,400,000</td>
+            <td class="num"><span class="score">88<span class="max">/100</span></span><div class="bar"><i style="width:88%"></i></div></td>
+            <td class="num data muted">12 ago 2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body-sm muted" style="margin-top:.85rem">Los montos y scores alinean por la derecha en JetBrains Mono con <span class="data">tabular-nums</span>: cada dígito ocupa el mismo ancho, así las cifras se comparan de un vistazo.</p>
+  </section>
+
+  <!-- SCALE -->
+  <section>
+    <div class="section-head"><span class="num">05</span><h3>Escala fija · Barlow Condensed</h3><span class="rule"></span></div>
+    <div class="scale-row"><span class="tok">5xl · 52 · KPI hero</span><span class="samp" style="font-size:3.25rem">$48.2M</span></div>
+    <div class="scale-row"><span class="tok">4xl · 40 · h1</span><span class="samp" style="font-size:2.5rem">Pipeline comercial</span></div>
+    <div class="scale-row"><span class="tok">3xl · 32 · h2</span><span class="samp" style="font-size:2rem">Proyectos activos</span></div>
+    <div class="scale-row"><span class="tok">2xl · 24 · h3</span><span class="samp" style="font-size:1.5rem">Siguientes acciones</span></div>
+    <div class="scale-row"><span class="tok">xl · 20 · card title</span><span class="samp" style="font-size:1.25rem">Grupo Alcázar — Saltillo</span></div>
+    <div class="scale-row" style="border:none"><span class="tok">base · 16 · cuerpo</span><span class="samp" style="font-family:var(--font-body);font-weight:400;font-size:1rem">Texto de lectura en Barlow regular a 16px con interlínea de 1.55.</span></div>
+  </section>
+
+  <!-- WEIGHTS -->
+  <section>
+    <div class="section-head"><span class="num">06</span><h3>Jerarquía por combinación</h3><span class="rule"></span></div>
+    <p class="muted body-sm" style="margin-top:0">Nunca solo por tamaño — familia + peso + color + espacio trabajando juntos:</p>
+    <div style="display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem">
+      <span class="eyebrow">Etapa del proyecto</span>
+      <span class="card-title" style="font-size:var(--text-2xl)">Textiles del Norte S.A.</span>
+      <span style="font-size:var(--text-sm);color:var(--muted)">Manufactura textil · Nuevo León · 3 contactos</span>
+      <span class="data" style="font-weight:500;font-size:var(--text-lg);margin-top:.3rem">$12,750,000 <span style="font-size:var(--text-sm);color:var(--muted)">MXN</span></span>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
