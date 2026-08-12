@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/db/client";
 import { listCompanies } from "@/db/companies";
 import { CompanyTable } from "@/components/company-table";
@@ -8,8 +9,14 @@ import { signOut } from "@/app/login/actions";
 // must not be statically prerendered (which would hit the DB during `next build`).
 export const dynamic = "force-dynamic";
 
-export default async function CompaniesPage() {
-  const companies = await listCompanies(db);
+export default async function CompaniesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ archived?: string }>;
+}) {
+  const { archived } = await searchParams;
+  const showArchived = archived === "1";
+  const companies = await listCompanies(db, { archived: showArchived });
 
   return (
     <main className="mx-auto max-w-4xl p-8">
@@ -19,8 +26,24 @@ export default async function CompaniesPage() {
           <button className="font-semibold text-sm underline">Salir</button>
         </form>
       </div>
-      <NewCompanyForm />
-      <CompanyTable data={companies} />
+
+      <div className="mt-6 flex gap-4 text-sm">
+        <Link
+          href="/companies"
+          className={showArchived ? "underline" : "font-semibold"}
+        >
+          Activas
+        </Link>
+        <Link
+          href="/companies?archived=1"
+          className={showArchived ? "font-semibold" : "underline"}
+        >
+          Archivadas
+        </Link>
+      </div>
+
+      {!showArchived && <NewCompanyForm />}
+      <CompanyTable data={companies} archived={showArchived} />
     </main>
   );
 }
