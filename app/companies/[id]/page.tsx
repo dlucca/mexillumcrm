@@ -36,6 +36,15 @@ export default async function CompanyDetailPage({
     archived: showArchivedProjects,
   });
 
+  const base = `/companies/${company.id}`;
+  const withParams = (contacts: boolean, projects: boolean) => {
+    const p = new URLSearchParams();
+    if (contacts) p.set("contactsArchived", "1");
+    if (projects) p.set("projectsArchived", "1");
+    const qs = p.toString();
+    return qs ? `${base}?${qs}` : base;
+  };
+
   return (
     <main className="mx-auto max-w-4xl p-8">
       <Link href="/companies" className="text-sm underline">
@@ -56,13 +65,13 @@ export default async function CompanyDetailPage({
         <h2 className="font-display font-bold text-2xl tracking-display">Contactos</h2>
         <div className="mt-4 flex gap-4 text-sm">
           <Link
-            href={`/companies/${company.id}`}
+            href={withParams(false, showArchivedProjects)}
             className={showArchivedContacts ? "underline" : "font-semibold"}
           >
             Activos
           </Link>
           <Link
-            href={`/companies/${company.id}?contactsArchived=1`}
+            href={withParams(true, showArchivedProjects)}
             className={showArchivedContacts ? "font-semibold" : "underline"}
           >
             Archivados
@@ -76,13 +85,13 @@ export default async function CompanyDetailPage({
         <h2 className="font-display font-bold text-2xl tracking-display">Proyectos</h2>
         <div className="mt-4 flex gap-4 text-sm">
           <Link
-            href={`/companies/${company.id}`}
+            href={withParams(showArchivedContacts, false)}
             className={showArchivedProjects ? "underline" : "font-semibold"}
           >
             Activos
           </Link>
           <Link
-            href={`/companies/${company.id}?projectsArchived=1`}
+            href={withParams(showArchivedContacts, true)}
             className={showArchivedProjects ? "font-semibold" : "underline"}
           >
             Archivados
