@@ -3,6 +3,7 @@ import { createTestDb } from "@/test/db";
 import { createCompany } from "@/db/companies";
 import { listProjects, listAllProjects } from "@/db/projects";
 import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
+import { listActivitiesForProject } from "@/db/activities";
 
 function formOf(entries: Record<string, string>): FormData {
   const fd = new FormData();
@@ -49,6 +50,23 @@ describe("runCreateProject", () => {
     const db = await createTestDb();
     const result = await runCreateProject(db, formOf({ companyId: "nope", name: "P" }), null);
     expect(result).toEqual({ ok: false, error: "Empresa inválida" });
+  });
+
+  it("registra una Activity 'system' al crear el proyecto", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    await runCreateProject(
+      db,
+      formOf({ companyId: company.id, name: "Planta", stage: "lead_sin_contactar" }),
+      "33333333-3333-3333-3333-333333333333"
+    );
+    const [proj] = await listProjects(db, company.id);
+    const acts = await listActivitiesForProject(db, proj.id);
+    expect(acts).toHaveLength(1);
+    expect(acts[0].type).toBe("system");
+    expect(acts[0].source).toBe("system");
+    expect(acts[0].companyId).toBe(company.id);
+    expect(acts[0].userId).toBe("33333333-3333-3333-3333-333333333333");
   });
 });
 

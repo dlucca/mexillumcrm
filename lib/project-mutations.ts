@@ -1,10 +1,10 @@
 import type { AnyDb } from "@/db/types";
 import {
-  createProject,
   updateProject,
   type NewProjectInput,
   type ProjectUpdateFields,
 } from "@/db/projects";
+import { projects, activities } from "@/db/schema";
 import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
 import { stageGroupFor } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
@@ -37,7 +37,20 @@ export async function runCreateProject(
     notes: parsed.data.notes,
   };
   try {
-    await createProject(db, input);
+    await db.transaction(async (tx) => {
+      const [created] = await tx.insert(projects).values(input).returning();
+      await tx.insert(activities).values({
+        companyId: created.companyId,
+        projectId: created.id,
+        userId: ownerUserId,
+        type: "system",
+        direction: "none",
+        subject: null,
+        body: null,
+        source: "system",
+        metadata: null,
+      });
+    });
   } catch {
     return { ok: false, error: "No se pudo crear el proyecto" };
   }
