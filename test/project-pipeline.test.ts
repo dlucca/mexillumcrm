@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { stageGroupFor, labelOf, formatMXN, STAGES } from "@/lib/project-pipeline";
+import { stageGroupFor, labelOf, formatMXN, STAGES, autoStatusForStage } from "@/lib/project-pipeline";
 
 describe("stageGroupFor", () => {
   const cases: Array<[string, string]> = [
@@ -36,5 +36,19 @@ describe("labelOf / formatMXN", () => {
   it("formatMXN formatea o devuelve —", () => {
     expect(formatMXN(null)).toBe("—");
     expect(formatMXN(1500000)).toContain("1,500,000");
+  });
+});
+
+describe("autoStatusForStage", () => {
+  it("contrato_firmado → won", () => {
+    expect(autoStatusForStage("contrato_firmado")).toBe("won");
+  });
+  it("cliente_activo → active_customer", () => {
+    expect(autoStatusForStage("cliente_activo")).toBe("active_customer");
+  });
+  it("otras etapas → null", () => {
+    expect(autoStatusForStage("lead_sin_contactar")).toBeNull();
+    expect(autoStatusForStage("propuesta_enviada")).toBeNull();
+    expect(autoStatusForStage("contrato_enviado")).toBeNull();
   });
 });

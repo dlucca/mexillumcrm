@@ -57,6 +57,35 @@ export function activityTypeLabel(type: string): string {
   return labelOf(ACTIVITY_TYPES, type);
 }
 
+export type CommercialMoment = {
+  type: "proposal" | "contract";
+  moment: "sent" | "accepted" | "signed";
+};
+
+export type CommercialMomentMetadata = { moment: "sent" | "accepted" | "signed" };
+
+const STAGE_TO_COMMERCIAL_MOMENT: Record<string, CommercialMoment> = {
+  propuesta_enviada: { type: "proposal", moment: "sent" },
+  propuesta_aceptada: { type: "proposal", moment: "accepted" },
+  contrato_enviado: { type: "contract", moment: "sent" },
+  contrato_firmado: { type: "contract", moment: "signed" },
+};
+
+export function commercialMomentForStage(stage: string): CommercialMoment | null {
+  return STAGE_TO_COMMERCIAL_MOMENT[stage] ?? null;
+}
+
+const COMMERCIAL_MOMENT_LABELS: Record<string, string> = {
+  "proposal:sent": "Propuesta enviada",
+  "proposal:accepted": "Propuesta aceptada",
+  "contract:sent": "Contrato enviado",
+  "contract:signed": "Contrato firmado",
+};
+
+export function commercialMomentLabel(type: string, moment: string): string {
+  return COMMERCIAL_MOMENT_LABELS[`${type}:${moment}`] ?? activityTypeLabel(type);
+}
+
 export function activityHeadline(activity: {
   type: string;
   body: string | null;
@@ -67,6 +96,15 @@ export function activityHeadline(activity: {
   }
   if (activity.type === "system") return "Proyecto creado";
   if (activity.type === "note") return activity.body ?? "";
+  if (
+    (activity.type === "proposal" || activity.type === "contract") &&
+    activity.metadata
+  ) {
+    return commercialMomentLabel(
+      activity.type,
+      (activity.metadata as CommercialMomentMetadata).moment
+    );
+  }
   return activityTypeLabel(activity.type);
 }
 

@@ -84,6 +84,15 @@ export function stageGroupFor(stage: string): string {
   return STAGE_TO_GROUP[stage] ?? "lead";
 }
 
+const STAGE_TO_AUTO_STATUS: Record<string, string> = {
+  contrato_firmado: "won",
+  cliente_activo: "active_customer",
+};
+
+export function autoStatusForStage(stage: string): string | null {
+  return STAGE_TO_AUTO_STATUS[stage] ?? null;
+}
+
 export function labelOf(options: readonly Option[], value: string | null): string {
   if (value == null) return "—";
   return options.find((o) => o.value === value)?.label ?? value;

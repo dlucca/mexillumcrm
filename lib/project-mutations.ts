@@ -5,7 +5,7 @@ import {
 } from "@/db/projects";
 import { projects, activities } from "@/db/schema";
 import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
-import { stageGroupFor } from "@/lib/project-pipeline";
+import { stageGroupFor, autoStatusForStage } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
 import { eq } from "drizzle-orm";
 import * as activityLog from "@/lib/activity-log";
@@ -103,8 +103,18 @@ export async function runUpdateProject(
       if (!current) {
         return { ok: false, error: "No se encontró el proyecto" };
       }
-      await tx.update(projects).set(fields).where(eq(projects.id, id));
-      if (current.stage !== fields.stage) {
+      const isEntry = current.stage !== fields.stage;
+      // Auto-status (§8.4): al ENTRAR a una etapa gatillo forzamos won/active_customer,
+      // pisando el status enviado SOLO en esa transición (nunca revierte hacia atrás).
+      // Asume que el status forzado no tiene invariantes cross-field (won/active_customer
+      // no exigen nada, a diferencia de 'lost'). Al ganar/activar limpiamos cualquier
+      // motivo de pérdida viejo para no dejar el row inconsistente.
+      const autoStatus = isEntry ? autoStatusForStage(fields.stage) : null;
+      const effectiveFields = autoStatus
+        ? { ...fields, status: autoStatus, lostReason: null, lostReasonNote: null }
+        : fields;
+      await tx.update(projects).set(effectiveFields).where(eq(projects.id, id));
+      if (isEntry) {
         await tx.insert(activities).values({
           companyId: current.companyId,
           projectId: id,
@@ -116,6 +126,20 @@ export async function runUpdateProject(
           source: "system",
           metadata: activityLog.stageChangeMetadata(current.stage, fields.stage),
         });
+        const moment = activityLog.commercialMomentForStage(fields.stage);
+        if (moment) {
+          await tx.insert(activities).values({
+            companyId: current.companyId,
+            projectId: id,
+            userId: actorUserId,
+            type: moment.type,
+            direction: "none",
+            subject: null,
+            body: null,
+            source: "system",
+            metadata: { moment: moment.moment },
+          });
+        }
       }
       return { ok: true };
     });
