@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateContactAction } from "@/app/companies/[id]/contacts/actions";
 import type { ActionResult } from "@/lib/company-mutations";
@@ -18,9 +18,11 @@ export function ContactEditForm({
     null
   );
   const router = useRouter();
+  const handled = useRef(false);
 
   useEffect(() => {
-    if (state?.ok) {
+    if (state?.ok && !handled.current) {
+      handled.current = true;
       router.refresh();
       onDone();
     }
