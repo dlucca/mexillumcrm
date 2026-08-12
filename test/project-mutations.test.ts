@@ -5,6 +5,7 @@ import { listProjects, listAllProjects } from "@/db/projects";
 import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
 import { listActivitiesForProject } from "@/db/activities";
 import * as activityLog from "@/lib/activity-log";
+import type { AnyDb as AnyDbT } from "@/db/types";
 
 function formOf(entries: Record<string, string>): FormData {
   const fd = new FormData();
@@ -167,5 +168,106 @@ describe("runUpdateProject", () => {
     const [row] = await listAllProjects(db);
     expect(row.stage).toBe("lead_sin_contactar"); // revertido
     spy.mockRestore();
+  });
+
+  async function moveTo(db: AnyDbT, company: { id: string }, id: string, stage: string, status = "open") {
+    return runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "P", stage, status, solutionType: "unknown" })
+    );
+  }
+
+  it("entrar a propuesta_enviada crea stage_change + proposal/sent, status queda open", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "propuesta_enviada");
+    const acts = await listActivitiesForProject(db, id);
+    const moments = acts.filter((a) => a.type === "proposal");
+    expect(acts.filter((a) => a.type === "stage_change")).toHaveLength(1);
+    expect(moments).toHaveLength(1);
+    expect(moments[0].metadata).toEqual({ moment: "sent" });
+    expect(moments[0].source).toBe("system");
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("open");
+  });
+
+  it("entrar a propuesta_aceptada crea proposal/accepted", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "propuesta_aceptada");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "proposal");
+    expect(moments).toHaveLength(1);
+    expect(moments[0].metadata).toEqual({ moment: "accepted" });
+  });
+
+  it("entrar a contrato_enviado crea contract/sent, status queda open", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "contrato_enviado");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "contract");
+    expect(moments).toHaveLength(1);
+    expect(moments[0].metadata).toEqual({ moment: "sent" });
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("open");
+  });
+
+  it("entrar a contrato_firmado crea contract/signed y fuerza status=won (form manda open)", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "contrato_firmado", "open");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "contract");
+    expect(moments).toHaveLength(1);
+    expect(moments[0].metadata).toEqual({ moment: "signed" });
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("won");
+  });
+
+  it("entrar a cliente_activo fuerza status=active_customer y NO crea momento", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "cliente_activo", "open");
+    const acts = await listActivitiesForProject(db, id);
+    expect(acts.filter((a) => a.type === "proposal" || a.type === "contract")).toHaveLength(0);
+    expect(acts.filter((a) => a.type === "stage_change")).toHaveLength(1);
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("active_customer");
+  });
+
+  it("entrar a etapa no-gatillo → solo stage_change, sin momento, status respetado", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "webcall_discovery", "paused");
+    const acts = await listActivitiesForProject(db, id);
+    expect(acts.filter((a) => a.type === "proposal" || a.type === "contract")).toHaveLength(0);
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("paused");
+  });
+
+  it("guardar sin cambio de etapa no re-fuerza ni crea momento; status enviado respetado", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "contrato_firmado", "open"); // ahora won
+    // segundo guardado: misma etapa, status manual paused
+    await runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "P", stage: "contrato_firmado", status: "paused", solutionType: "unknown" })
+    );
+    const contracts = (await listActivitiesForProject(db, id)).filter((a) => a.type === "contract");
+    expect(contracts).toHaveLength(1); // no se duplicó
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("paused"); // no re-forzado a won
+  });
+
+  it("re-entrar a propuesta_enviada dispara el momento otra vez", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "propuesta_enviada");
+    await moveTo(db, company, id, "negociacion_objeciones");
+    await moveTo(db, company, id, "propuesta_enviada");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "proposal");
+    expect(moments).toHaveLength(2);
+  });
+
+  it("mover hacia atrás desde won no revierte el status", async () => {
+    const { db, company, id } = await seed();
+    await moveTo(db, company, id, "contrato_firmado", "open"); // won
+    // el form mandaría el status actual (won) al mover la etapa
+    await moveTo(db, company, id, "negociacion_objeciones", "won");
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("won");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "proposal" || a.type === "contract");
+    expect(moments).toHaveLength(1); // solo el contract/signed original
   });
 });

@@ -5,7 +5,7 @@ import {
 } from "@/db/projects";
 import { projects, activities } from "@/db/schema";
 import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
-import { stageGroupFor } from "@/lib/project-pipeline";
+import { stageGroupFor, autoStatusForStage } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
 import { eq } from "drizzle-orm";
 import * as activityLog from "@/lib/activity-log";
@@ -103,8 +103,11 @@ export async function runUpdateProject(
       if (!current) {
         return { ok: false, error: "No se encontró el proyecto" };
       }
-      await tx.update(projects).set(fields).where(eq(projects.id, id));
-      if (current.stage !== fields.stage) {
+      const isEntry = current.stage !== fields.stage;
+      const autoStatus = isEntry ? autoStatusForStage(fields.stage) : null;
+      const effectiveFields = autoStatus ? { ...fields, status: autoStatus } : fields;
+      await tx.update(projects).set(effectiveFields).where(eq(projects.id, id));
+      if (isEntry) {
         await tx.insert(activities).values({
           companyId: current.companyId,
           projectId: id,
@@ -116,6 +119,20 @@ export async function runUpdateProject(
           source: "system",
           metadata: activityLog.stageChangeMetadata(current.stage, fields.stage),
         });
+        const moment = activityLog.commercialMomentForStage(fields.stage);
+        if (moment) {
+          await tx.insert(activities).values({
+            companyId: current.companyId,
+            projectId: id,
+            userId: actorUserId,
+            type: moment.type,
+            direction: "none",
+            subject: null,
+            body: null,
+            source: "system",
+            metadata: { moment: moment.moment },
+          });
+        }
       }
       return { ok: true };
     });
