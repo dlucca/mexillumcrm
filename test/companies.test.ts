@@ -30,4 +30,25 @@ describe("listCompanies", () => {
     expect(rows.map((r) => r.name)).toEqual(["Segunda"]);
     expect(rows[0].id).toBe(second.id);
   });
+
+  it("orders non-archived companies newest first by createdAt", async () => {
+    const db = await createTestDb();
+
+    const [oldest] = await db
+      .insert(companies)
+      .values({ name: "Oldest", createdAt: new Date("2024-01-01T00:00:00Z") })
+      .returning();
+    const [middle] = await db
+      .insert(companies)
+      .values({ name: "Middle", createdAt: new Date("2024-06-01T00:00:00Z") })
+      .returning();
+    const [newest] = await db
+      .insert(companies)
+      .values({ name: "Newest", createdAt: new Date("2024-12-01T00:00:00Z") })
+      .returning();
+
+    const rows = await listCompanies(db);
+    expect(rows.map((r) => r.id)).toEqual([newest.id, middle.id, oldest.id]);
+    expect(rows.map((r) => r.name)).toEqual(["Newest", "Middle", "Oldest"]);
+  });
 });

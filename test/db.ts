@@ -1,10 +1,10 @@
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
-import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import * as schema from "@/db/schema";
+import type { AnyDb } from "@/db/types";
 
-export type AnyDb = PgDatabase<PgQueryResultHKT, typeof schema>;
+export type { AnyDb } from "@/db/types";
 
 export async function createTestDb(): Promise<AnyDb> {
   const client = new PGlite();

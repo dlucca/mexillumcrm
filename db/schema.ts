@@ -22,7 +22,7 @@ export const companies = pgTable(
     index("companies_owner_user_id_idx").on(t.ownerUserId),
     index("companies_archived_at_idx").on(t.archivedAt),
   ]
-);
+).enableRLS();
 
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;

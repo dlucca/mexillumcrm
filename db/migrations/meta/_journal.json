@@ -8,6 +8,13 @@
       "when": 1786546584247,
       "tag": "0000_worthless_fabian_cortez",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786548574730,
+      "tag": "0001_acoustic_rictor",
+      "breakpoints": true
     }
   ]
 }

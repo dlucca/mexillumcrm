@@ -1,7 +1,7 @@
 import { desc, isNull } from "drizzle-orm";
 import { companies } from "./schema";
 import type { Company } from "./schema";
-import type { AnyDb } from "@/test/db";
+import type { AnyDb } from "@/db/types";
 
 export async function createCompany(
   db: AnyDb,
