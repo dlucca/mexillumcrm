@@ -5,6 +5,8 @@ import {
   describeStageChange,
   activityTypeLabel,
   activityHeadline,
+  commercialMomentForStage,
+  commercialMomentLabel,
 } from "@/lib/activity-log";
 
 describe("activity-log helpers", () => {
@@ -44,5 +46,39 @@ describe("activity-log helpers", () => {
     ).toBe("Lead / sin contactar → Outreach enviado");
     expect(activityHeadline({ type: "system", body: null, metadata: null })).toBe("Proyecto creado");
     expect(activityHeadline({ type: "note", body: "una nota", metadata: null })).toBe("una nota");
+  });
+
+  it("activityHeadline para momentos comerciales", () => {
+    expect(activityHeadline({ type: "proposal", body: null, metadata: { moment: "sent" } })).toBe("Propuesta enviada");
+    expect(activityHeadline({ type: "contract", body: null, metadata: { moment: "signed" } })).toBe("Contrato firmado");
+  });
+
+  it("activityHeadline sin metadata cae al label del tipo", () => {
+    expect(activityHeadline({ type: "proposal", body: null, metadata: null })).toBe("Propuesta");
+  });
+});
+
+describe("commercialMomentForStage", () => {
+  it("mapea las 4 etapas gatillo", () => {
+    expect(commercialMomentForStage("propuesta_enviada")).toEqual({ type: "proposal", moment: "sent" });
+    expect(commercialMomentForStage("propuesta_aceptada")).toEqual({ type: "proposal", moment: "accepted" });
+    expect(commercialMomentForStage("contrato_enviado")).toEqual({ type: "contract", moment: "sent" });
+    expect(commercialMomentForStage("contrato_firmado")).toEqual({ type: "contract", moment: "signed" });
+  });
+  it("otras etapas → null", () => {
+    expect(commercialMomentForStage("lead_sin_contactar")).toBeNull();
+    expect(commercialMomentForStage("cliente_activo")).toBeNull();
+  });
+});
+
+describe("commercialMomentLabel", () => {
+  it("labels español por (type, moment)", () => {
+    expect(commercialMomentLabel("proposal", "sent")).toBe("Propuesta enviada");
+    expect(commercialMomentLabel("proposal", "accepted")).toBe("Propuesta aceptada");
+    expect(commercialMomentLabel("contract", "sent")).toBe("Contrato enviado");
+    expect(commercialMomentLabel("contract", "signed")).toBe("Contrato firmado");
+  });
+  it("combinación desconocida → label del tipo", () => {
+    expect(commercialMomentLabel("proposal", "signed")).toBe("Propuesta");
   });
 });
