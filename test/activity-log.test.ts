@@ -48,6 +48,11 @@ describe("activity-log helpers", () => {
     expect(activityHeadline({ type: "note", body: "una nota", metadata: null })).toBe("una nota");
   });
 
+  it("activityHeadline para type task devuelve el body", () => {
+    expect(activityHeadline({ type: "task", body: "Llamar al cliente", metadata: null })).toBe("Llamar al cliente");
+    expect(activityHeadline({ type: "task", body: null, metadata: null })).toBe("Tarea");
+  });
+
   it("activityHeadline para momentos comerciales", () => {
     expect(activityHeadline({ type: "proposal", body: null, metadata: { moment: "sent" } })).toBe("Propuesta enviada");
     expect(activityHeadline({ type: "contract", body: null, metadata: { moment: "signed" } })).toBe("Contrato firmado");

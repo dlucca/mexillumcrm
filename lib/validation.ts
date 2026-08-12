@@ -142,3 +142,19 @@ export const noteCreateSchema = z.object({
 });
 
 export type NoteCreateInput = z.infer<typeof noteCreateSchema>;
+
+const requiredDate = z.preprocess(
+  (v) => (typeof v === "string" ? v.trim() : ""),
+  z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida")
+);
+
+export const taskCreateSchema = z.object({
+  projectId: z.string().uuid("Proyecto inválido"),
+  title: z.preprocess(
+    (v) => (typeof v === "string" ? v.trim() : ""),
+    z.string().min(1, "El título es obligatorio")
+  ),
+  dueDate: requiredDate,
+});
+
+export type TaskCreateInput = z.infer<typeof taskCreateSchema>;
