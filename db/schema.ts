@@ -121,6 +121,8 @@ export const activities = pgTable(
     source: text("source").notNull(),
     metadata: jsonb("metadata"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    // Las activities son append-only (sin update/delete); updated_at queda por
+    // uniformidad de schema y el $onUpdate nunca dispara en la práctica.
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow()
