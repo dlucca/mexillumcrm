@@ -8,15 +8,16 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import Link from "next/link";
-import type { ProjectListRow } from "@/db/projects";
+import type { Project } from "@/db/schema";
 import { STAGES, STATUSES, SOLUTION_TYPES, labelOf, formatMXN } from "@/lib/project-pipeline";
 
-const columnHelper = createColumnHelper<ProjectListRow>();
+const columnHelper = createColumnHelper<Project & { companyName?: string }>();
 
 function buildColumns(showCompany: boolean) {
   // Explicit ColumnDef[] typing: accessors of different value types (string vs
   // number) mixed via conditional .push() would otherwise infer too narrow.
-  const cols: ColumnDef<ProjectListRow, any>[] = [
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cols: ColumnDef<Project & { companyName?: string }, any>[] = [
     columnHelper.accessor("name", {
       header: "Nombre",
       cell: (info) => (
@@ -60,7 +61,7 @@ export function ProjectTable({
   archived = false,
   showCompany = false,
 }: {
-  data: ProjectListRow[];
+  data: (Project & { companyName?: string })[];
   archived?: boolean;
   showCompany?: boolean;
 }) {
