@@ -15,6 +15,13 @@
       "when": 1786548574730,
       "tag": "0001_acoustic_rictor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786555350673,
+      "tag": "0002_glamorous_senator_kelly",
+      "breakpoints": true
     }
   ]
 }
