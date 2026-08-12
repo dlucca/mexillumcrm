@@ -270,4 +270,19 @@ describe("runUpdateProject", () => {
     const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "proposal" || a.type === "contract");
     expect(moments).toHaveLength(1); // solo el contract/signed original
   });
+
+  it("forzar won limpia un lostReason viejo", async () => {
+    const { db, company, id } = await seed();
+    // marcar como perdido con motivo en una etapa cualquiera
+    await runUpdateProject(
+      db,
+      formOf({ id, companyId: company.id, name: "P", stage: "negociacion_objeciones", status: "lost", lostReason: "precio", solutionType: "unknown" })
+    );
+    // entrar a contrato_firmado → won automático debe limpiar el motivo de pérdida
+    await moveTo(db, company, id, "contrato_firmado", "open");
+    const [row] = await listAllProjects(db);
+    expect(row.status).toBe("won");
+    expect(row.lostReason).toBeNull();
+    expect(row.lostReasonNote).toBeNull();
+  });
 });

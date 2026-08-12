@@ -104,8 +104,15 @@ export async function runUpdateProject(
         return { ok: false, error: "No se encontró el proyecto" };
       }
       const isEntry = current.stage !== fields.stage;
+      // Auto-status (§8.4): al ENTRAR a una etapa gatillo forzamos won/active_customer,
+      // pisando el status enviado SOLO en esa transición (nunca revierte hacia atrás).
+      // Asume que el status forzado no tiene invariantes cross-field (won/active_customer
+      // no exigen nada, a diferencia de 'lost'). Al ganar/activar limpiamos cualquier
+      // motivo de pérdida viejo para no dejar el row inconsistente.
       const autoStatus = isEntry ? autoStatusForStage(fields.stage) : null;
-      const effectiveFields = autoStatus ? { ...fields, status: autoStatus } : fields;
+      const effectiveFields = autoStatus
+        ? { ...fields, status: autoStatus, lostReason: null, lostReasonNote: null }
+        : fields;
       await tx.update(projects).set(effectiveFields).where(eq(projects.id, id));
       if (isEntry) {
         await tx.insert(activities).values({
