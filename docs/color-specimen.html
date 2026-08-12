@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mexillum CRM — Specimen de color</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-body: "Barlow", system-ui, sans-serif;
+    --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.875rem; --text-base:1rem;
+    --text-lg:1.125rem; --text-xl:1.25rem; --text-2xl:1.5rem; --text-3xl:2rem;
+    --text-4xl:2.5rem; --text-5xl:3.25rem;
+
+    --bg:oklch(.985 .006 80); --surface:oklch(.998 .003 85); --surface-2:oklch(.965 .006 78);
+    --ink:oklch(.26 .014 60); --muted:oklch(.50 .016 62); --faint:oklch(.64 .014 65);
+    --line:oklch(.90 .008 72); --line-strong:oklch(.83 .010 70);
+    --solar:oklch(.70 .155 62); --solar-strong:oklch(.62 .160 55); --solar-ink:oklch(.44 .130 52);
+    --solar-wash:oklch(.955 .035 78); --on-solar:oklch(.24 .030 55);
+    --storage:oklch(.50 .110 214); --storage-ink:oklch(.48 .110 218);
+    --storage-wash:oklch(.955 .025 220); --on-storage:oklch(.99 .005 220);
+    --success:oklch(.58 .13 150); --success-ink:oklch(.46 .12 150); --success-wash:oklch(.95 .03 150);
+    --danger:oklch(.55 .18 25); --danger-ink:oklch(.50 .19 25); --danger-wash:oklch(.955 .03 25);
+    --sol-both:oklch(.56 .095 258);
+    --group-lead:oklch(.62 .045 240); --group-qual:oklch(.58 .095 214); --group-solution:oklch(.60 .10 196);
+    --group-commercial:oklch(.70 .15 62); --group-delivery:oklch(.66 .155 40); --group-active:oklch(.60 .13 150);
+    --pot-bajo:oklch(.74 .045 72); --pot-medio:oklch(.72 .105 66); --pot-alto:oklch(.69 .15 58); --pot-muyalto:oklch(.64 .175 46);
+  }
+  html[data-theme="dark"] {
+    --bg:oklch(.185 .010 66); --surface:oklch(.225 .012 66); --surface-2:oklch(.265 .013 66);
+    --ink:oklch(.94 .008 82); --muted:oklch(.71 .012 78); --faint:oklch(.56 .012 70);
+    --line:oklch(.31 .012 68); --line-strong:oklch(.41 .014 68);
+    --solar:oklch(.78 .150 68); --solar-strong:oklch(.84 .140 70); --solar-ink:oklch(.82 .130 70);
+    --solar-wash:oklch(.30 .055 66); --on-solar:oklch(.20 .030 60);
+    --storage:oklch(.66 .110 212); --storage-ink:oklch(.74 .100 214);
+    --storage-wash:oklch(.30 .040 220); --on-storage:oklch(.16 .020 220);
+    --success:oklch(.72 .14 152); --success-ink:oklch(.78 .12 152); --success-wash:oklch(.30 .05 152);
+    --danger:oklch(.68 .17 25); --danger-ink:oklch(.76 .15 25); --danger-wash:oklch(.30 .06 25);
+    --sol-both:oklch(.68 .09 262);
+    --group-lead:oklch(.68 .05 240); --group-qual:oklch(.68 .10 214); --group-solution:oklch(.70 .10 196);
+    --group-commercial:oklch(.80 .14 66); --group-delivery:oklch(.74 .15 42); --group-active:oklch(.72 .13 152);
+    --pot-bajo:oklch(.60 .04 72); --pot-medio:oklch(.66 .10 66); --pot-alto:oklch(.74 .15 58); --pot-muyalto:oklch(.80 .17 50);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased; padding:2.5rem clamp(1rem,4vw,3rem) 5rem; }
+  .wrap { max-width:1120px; margin:0 auto; }
+  .eyebrow { font-family:var(--font-display); font-weight:600; font-size:var(--text-2xs);
+    letter-spacing:.12em; text-transform:uppercase; color:var(--solar-ink); }
+  h1 { font-family:var(--font-display); font-weight:700; font-size:var(--text-4xl); line-height:1.03;
+    letter-spacing:-.005em; margin:.35rem 0 .2rem; }
+  h2 { font-family:var(--font-display); font-weight:700; font-size:var(--text-2xl); line-height:1.1; margin:0; }
+  h3 { font-family:var(--font-display); font-weight:600; font-size:var(--text-xl); line-height:1.2; margin:0; }
+  .sub { color:var(--muted); font-size:var(--text-sm); max-width:62ch; }
+  .data { font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  .col-label { font-family:var(--font-display); font-weight:600; font-size:var(--text-xs);
+    letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+
+  header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
+    border-bottom:1px solid var(--line); padding-bottom:1.5rem; margin-bottom:2.25rem; }
+  .toggle { font-family:var(--font-body); font-weight:600; font-size:var(--text-sm); cursor:pointer;
+    background:var(--surface); color:var(--ink); border:1px solid var(--line-strong);
+    border-radius:8px; padding:.5rem .9rem; }
+  .toggle:hover { background:var(--surface-2); }
+
+  section { margin-top:2.75rem; }
+  .section-head { display:flex; align-items:baseline; gap:1rem; margin-bottom:1.1rem; }
+  .section-head .rule { flex:1; height:1px; background:var(--line); }
+  .section-head .n { font-family:var(--font-mono); font-size:var(--text-xs); color:var(--faint); }
+
+  /* swatch ramps */
+  .ramp { display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:.6rem; }
+  .sw { border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .sw .chip { height:56px; }
+  .sw .lbl { padding:.45rem .55rem .55rem; background:var(--surface); }
+  .sw .name { font-size:var(--text-xs); font-weight:600; }
+  .sw .val { font-family:var(--font-mono); font-size:10px; color:var(--faint); word-break:break-all; }
+
+  .cols { display:grid; gap:1.5rem; }
+  @media (min-width:760px){ .two{grid-template-columns:1fr 1fr;} }
+
+  /* badges */
+  .badge { display:inline-flex; align-items:center; gap:.35em; padding:.18em .6em; border-radius:999px;
+    font-size:var(--text-2xs); font-weight:600; }
+  .b-solar{background:var(--solar-wash);color:var(--solar-ink);}
+  .b-storage{background:var(--storage-wash);color:var(--storage-ink);}
+  .b-success{background:var(--success-wash);color:var(--success-ink);}
+  .b-danger{background:var(--danger-wash);color:var(--danger-ink);}
+  .b-neutral{background:var(--surface-2);color:var(--muted);}
+  .b-both{background:var(--surface-2);color:var(--sol-both);}
+  .dot{width:.5em;height:.5em;border-radius:999px;}
+
+  /* buttons */
+  .btns{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;}
+  .btn{font-family:var(--font-body);font-weight:600;font-size:var(--text-sm);letter-spacing:.01em;
+    border-radius:8px;padding:.55rem 1rem;cursor:pointer;border:1px solid transparent;}
+  .btn-primary{background:var(--solar);color:var(--on-solar);}
+  .btn-primary:hover{background:var(--solar-strong);}
+  .btn-secondary{background:var(--surface);color:var(--ink);border-color:var(--line-strong);}
+  .btn-ghost{background:transparent;color:var(--storage-ink);}
+  .btn-danger{background:transparent;color:var(--danger-ink);border-color:color-mix(in oklch,var(--danger) 40%,transparent);}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .kpi{background:var(--surface);padding:1.15rem 1.25rem 1.3rem;}
+  .kpi .k-lbl{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xs);
+    letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .kpi .k-val{font-family:var(--font-display);font-weight:700;font-size:var(--text-5xl);line-height:1;
+    margin-top:.35rem;font-variant-numeric:tabular-nums;}
+  .kpi .k-sub{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--faint);margin-top:.3rem;}
+  .up{color:var(--success-ink);} .down{color:var(--danger-ink);}
+
+  /* kanban */
+  .kanban{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:.85rem;overflow-x:auto;padding-bottom:.4rem;}
+  .kcol{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;border-top:3px solid var(--g);
+    padding:.7rem .65rem;min-width:150px;}
+  .kcol .khead{display:flex;align-items:center;gap:.4rem;margin-bottom:.7rem;}
+  .kcol .kname{font-family:var(--font-display);font-weight:600;font-size:var(--text-xs);letter-spacing:.06em;
+    text-transform:uppercase;color:var(--ink);}
+  .kcol .kcount{margin-left:auto;font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--faint);}
+
+  /* project card */
+  .pcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem 1.1rem;}
+  .pcard.k{padding:.7rem .75rem;border-radius:9px;}
+  .pcard .co{font-family:var(--font-display);font-weight:600;font-size:var(--text-lg);line-height:1.2;}
+  .pcard.k .co{font-size:var(--text-sm);}
+  .pcard .plant{font-size:var(--text-xs);color:var(--muted);margin-top:.05rem;}
+  .pcard .amt{font-family:var(--font-mono);font-weight:500;font-size:var(--text-lg);margin-top:.55rem;}
+  .pcard.k .amt{font-size:var(--text-sm);margin-top:.4rem;}
+  .pcard .usd{font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--faint);}
+  .pcard .row{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-top:.6rem;}
+  .stage{font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--muted);
+    background:var(--surface-2);border-radius:5px;padding:.15em .45em;}
+  .naction{display:flex;align-items:center;gap:.4rem;margin-top:.65rem;padding-top:.6rem;
+    border-top:1px solid var(--line);font-size:var(--text-xs);color:var(--muted);}
+
+  /* score bars */
+  .scores{display:grid;gap:.5rem;}
+  .score{display:grid;grid-template-columns:130px 1fr 34px;align-items:center;gap:.7rem;}
+  .score .s-lbl{font-size:var(--text-xs);color:var(--muted);}
+  .bar{height:7px;border-radius:4px;background:var(--surface-2);position:relative;overflow:hidden;}
+  .bar>i{position:absolute;inset:0 auto 0 0;background:var(--solar);border-radius:4px;}
+  .bar.top>i{background:var(--solar);} .bar.dim>i{background:color-mix(in oklch,var(--solar) 55%,var(--surface-2));}
+  .score .s-val{font-family:var(--font-mono);font-size:var(--text-sm);text-align:right;}
+
+  /* potential heatmap */
+  .heat{display:flex;gap:.55rem;flex-wrap:wrap;}
+  .hcell{border-radius:9px;padding:.7rem .9rem;min-width:110px;}
+  .hcell .hl{font-family:var(--font-display);font-weight:600;font-size:var(--text-2xs);letter-spacing:.06em;
+    text-transform:uppercase;}
+
+  /* table */
+  .tbl-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;overflow-x:auto;background:var(--surface);}
+  table{width:100%;border-collapse:collapse;min-width:640px;}
+  th{text-align:left;padding:.7rem 1rem;border-bottom:1px solid var(--line-strong);
+    background:var(--surface-2);font-family:var(--font-display);font-weight:600;font-size:var(--text-xs);
+    letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  td{padding:.75rem 1rem;border-bottom:1px solid var(--line);font-size:var(--text-sm);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+  .owner{display:inline-flex;align-items:center;gap:.4rem;}
+  .ava{width:22px;height:22px;border-radius:999px;background:var(--storage-wash);color:var(--storage-ink);
+    display:grid;place-items:center;font-size:10px;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Mexillum CRM · Sistema de color</div>
+      <h1>Sol + Almacenamiento</h1>
+      <p class="sub">Neutros cálidos como base (60%), teal-azul de storage y semántica verde/rojo como apoyo (30%), ámbar solar como acento vivo (10%). Panel de control energético, no arcoíris.</p>
+    </div>
+    <button class="toggle" id="t">◐ Tema</button>
+  </header>
+
+  <!-- NEUTRALS -->
+  <section>
+    <div class="section-head"><h2>Neutros cálidos</h2><span class="rule"></span><span class="n">01</span></div>
+    <div class="ramp">
+      <div class="sw"><div class="chip" style="background:var(--bg)"></div><div class="lbl"><div class="name">bg</div><div class="val">.985 .006 80</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface)"></div><div class="lbl"><div class="name">surface</div><div class="val">.998 .003 85</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface-2)"></div><div class="lbl"><div class="name">surface-2</div><div class="val">.965 .006 78</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--line)"></div><div class="lbl"><div class="name">line</div><div class="val">.90 .008 72</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--line-strong)"></div><div class="lbl"><div class="name">line-strong</div><div class="val">.83 .010 70</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--faint)"></div><div class="lbl"><div class="name">faint</div><div class="val">.64 .014 65</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--muted)"></div><div class="lbl"><div class="name">muted</div><div class="val">.50 .016 62</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ink)"></div><div class="lbl"><div class="name">ink</div><div class="val">.26 .014 60</div></div></div>
+    </div>
+  </section>
+
+  <!-- POLES -->
+  <section>
+    <div class="section-head"><h2>Polos de marca</h2><span class="rule"></span><span class="n">02</span></div>
+    <div class="cols two">
+      <div>
+        <h3 style="color:var(--solar-ink)">☀ Solar · primary</h3>
+        <div class="ramp" style="margin-top:.7rem;grid-template-columns:repeat(auto-fit,minmax(84px,1fr))">
+          <div class="sw"><div class="chip" style="background:var(--solar-wash)"></div><div class="lbl"><div class="name">wash</div></div></div>
+          <div class="sw"><div class="chip" style="background:var(--solar)"></div><div class="lbl"><div class="name">solar</div></div></div>
+          <div class="sw"><div class="chip" style="background:var(--solar-strong)"></div><div class="lbl"><div class="name">strong</div></div></div>
+          <div class="sw"><div class="chip" style="background:var(--solar-ink)"></div><div class="lbl"><div class="name">ink</div></div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--storage-ink)">▪ Storage / BESS · secondary</h3>
+        <div class="ramp" style="margin-top:.7rem;grid-template-columns:repeat(auto-fit,minmax(84px,1fr))">
+          <div class="sw"><div class="chip" style="background:var(--storage-wash)"></div><div class="lbl"><div class="name">wash</div></div></div>
+          <div class="sw"><div class="chip" style="background:var(--storage)"></div><div class="lbl"><div class="name">storage</div></div></div>
+          <div class="sw"><div class="chip" style="background:var(--storage-ink)"></div><div class="lbl"><div class="name">ink</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BADGES + BUTTONS -->
+  <section>
+    <div class="section-head"><h2>Estado, solución y acción</h2><span class="rule"></span><span class="n">03</span></div>
+    <div class="cols two">
+      <div>
+        <div class="col-label">status</div>
+        <div class="row" style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 1.2rem">
+          <span class="badge b-success"><span class="dot" style="background:var(--success)"></span>Won</span>
+          <span class="badge b-danger"><span class="dot" style="background:var(--danger)"></span>Lost</span>
+          <span class="badge b-solar"><span class="dot" style="background:var(--solar)"></span>Open</span>
+          <span class="badge b-neutral"><span class="dot" style="background:var(--faint)"></span>Paused</span>
+          <span class="badge b-success"><span class="dot" style="background:var(--success)"></span>Cliente activo</span>
+        </div>
+        <div class="col-label">solution_type</div>
+        <div class="row" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+          <span class="badge b-solar">☀ Solar</span>
+          <span class="badge b-storage">▪ BESS</span>
+          <span class="badge b-both">◆ Solar + BESS</span>
+          <span class="badge b-neutral">? Unknown</span>
+        </div>
+      </div>
+      <div>
+        <div class="col-label">Acciones</div>
+        <div class="btns" style="margin:.6rem 0 1rem">
+          <button class="btn btn-primary">Nuevo lead</button>
+          <button class="btn btn-secondary">Filtrar</button>
+          <button class="btn btn-ghost">Ver diagnóstico</button>
+          <button class="btn btn-danger">Marcar perdido</button>
+        </div>
+        <div class="col-label">Alertas</div>
+        <div class="row" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+          <span class="badge b-danger">● Sin next action</span>
+          <span class="badge b-danger">● 2 tareas vencidas</span>
+          <span class="badge b-solar">● Faltan datos técnicos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section>
+    <div class="section-head"><h2>Dashboard</h2><span class="rule"></span><span class="n">04</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="k-lbl">Pipeline abierto</div><div class="k-val" style="color:var(--solar)">42</div><div class="k-sub">proyectos</div></div>
+      <div class="kpi"><div class="k-lbl">Valor en juego</div><div class="k-val">18.4<span style="font-size:var(--text-2xl)">M</span></div><div class="k-sub">MXN · ≈ 1.02M USD</div></div>
+      <div class="kpi"><div class="k-lbl">Conversión propuesta</div><div class="k-val up">34<span style="font-size:var(--text-2xl)">%</span></div><div class="k-sub up">▲ +6 pts vs mes ant.</div></div>
+      <div class="kpi"><div class="k-lbl">Sin next action</div><div class="k-val down">5</div><div class="k-sub down">● requieren atención</div></div>
+    </div>
+  </section>
+
+  <!-- KANBAN -->
+  <section>
+    <div class="section-head"><h2>Pipeline · 6 grupos</h2><span class="rule"></span><span class="n">05</span></div>
+    <div class="kanban">
+      <div class="kcol" style="--g:var(--group-lead)"><div class="khead"><span class="dot" style="background:var(--group-lead);width:.6em;height:.6em"></span><span class="kname">Lead</span><span class="kcount">8</span></div>
+        <div class="pcard k"><div class="co">Cervecería Norte</div><div class="plant">Planta Saltillo</div><div class="amt">$2,400,000</div></div></div>
+      <div class="kcol" style="--g:var(--group-qual)"><div class="khead"><span class="dot" style="background:var(--group-qual);width:.6em;height:.6em"></span><span class="kname">Qualif.</span><span class="kcount">6</span></div>
+        <div class="pcard k"><div class="co">Grupo Textil MX</div><div class="plant">Nave Puebla 2</div><div class="amt">$1,150,000</div></div></div>
+      <div class="kcol" style="--g:var(--group-solution)"><div class="khead"><span class="dot" style="background:var(--group-solution);width:.6em;height:.6em"></span><span class="kname">Solution</span><span class="kcount">9</span></div>
+        <div class="pcard k"><div class="co">AutoPartes Bajío</div><div class="plant">Planta Celaya</div><div class="amt">$3,800,000</div></div></div>
+      <div class="kcol" style="--g:var(--group-commercial)"><div class="khead"><span class="dot" style="background:var(--group-commercial);width:.6em;height:.6em"></span><span class="kname">Commercial</span><span class="kcount">7</span></div>
+        <div class="pcard k"><div class="co">Frigorífico Sur</div><div class="plant">CEDIS Irapuato</div><div class="amt">$5,200,000</div></div></div>
+      <div class="kcol" style="--g:var(--group-delivery)"><div class="khead"><span class="dot" style="background:var(--group-delivery);width:.6em;height:.6em"></span><span class="kname">Delivery</span><span class="kcount">4</span></div>
+        <div class="pcard k"><div class="co">Hotelera Costa</div><div class="plant">Resort Cancún</div><div class="amt">$6,900,000</div></div></div>
+      <div class="kcol" style="--g:var(--group-active)"><div class="khead"><span class="dot" style="background:var(--group-active);width:.6em;height:.6em"></span><span class="kname">Active</span><span class="kcount">3</span></div>
+        <div class="pcard k"><div class="co">Molinos del Valle</div><div class="plant">Planta León</div><div class="amt">$4,100,000</div></div></div>
+    </div>
+  </section>
+
+  <!-- PROJECT CARD + DIAGNOSTIC -->
+  <section>
+    <div class="section-head"><h2>Card de proyecto + diagnóstico</h2><span class="rule"></span><span class="n">06</span></div>
+    <div class="cols two">
+      <div class="pcard">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:.6rem">
+          <div><div class="co">Frigorífico Sur</div><div class="plant">CEDIS Irapuato · Guanajuato</div></div>
+          <span class="badge b-storage">▪ BESS</span>
+        </div>
+        <div class="amt">$5,200,000 <span class="usd">≈ $289,400 USD</span></div>
+        <div class="row">
+          <span class="stage">7/13 · Propuesta enviada</span>
+          <span class="badge b-solar">● Live</span>
+        </div>
+        <div class="naction"><span class="dot" style="background:var(--solar)"></span>Next action: seguimiento propuesta · <span class="data">14 ago 2026</span></div>
+      </div>
+      <div class="pcard">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3>Palancas de valor</h3><span class="badge b-solar">Potencial: Alto</span>
+        </div>
+        <div class="scores" style="margin-top:.9rem">
+          <div class="score"><span class="s-lbl">Peak shaving</span><div class="bar top"><i style="width:88%"></i></div><span class="s-val">88</span></div>
+          <div class="score"><span class="s-lbl">Arbitraje</span><div class="bar dim"><i style="width:71%"></i></div><span class="s-val">71</span></div>
+          <div class="score"><span class="s-lbl">Respaldo</span><div class="bar dim"><i style="width:64%"></i></div><span class="s-val">64</span></div>
+          <div class="score"><span class="s-lbl">BESS + Solar</span><div class="bar dim"><i style="width:52%"></i></div><span class="s-val">52</span></div>
+          <div class="score"><span class="s-lbl">Diferimiento</span><div class="bar dim"><i style="width:38%"></i></div><span class="s-val">38</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POTENTIAL HEATMAP -->
+  <section>
+    <div class="section-head"><h2>Potencial general · heatmap</h2><span class="rule"></span><span class="n">07</span></div>
+    <div class="heat">
+      <div class="hcell" style="background:var(--pot-bajo)"><div class="hl" style="color:var(--on-solar)">Bajo</div></div>
+      <div class="hcell" style="background:var(--pot-medio)"><div class="hl" style="color:var(--on-solar)">Medio</div></div>
+      <div class="hcell" style="background:var(--pot-alto)"><div class="hl" style="color:var(--on-solar)">Alto</div></div>
+      <div class="hcell" style="background:var(--pot-muyalto)"><div class="hl" style="color:var(--on-solar)">Muy Alto</div></div>
+    </div>
+  </section>
+
+  <!-- TABLE -->
+  <section>
+    <div class="section-head"><h2>Vista de tabla</h2><span class="rule"></span><span class="n">08</span></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Proyecto</th><th>Solución</th><th>Etapa</th><th>Owner</th><th style="text-align:right">Valor MXN</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cervecería Norte</strong><div class="plant">Saltillo</div></td><td><span class="badge b-solar">☀ Solar</span></td><td class="num">1/13</td><td><span class="owner"><span class="ava">DL</span>D. Lucca</span></td><td class="num" style="text-align:right">2,400,000</td><td><span class="badge b-solar">Open</span></td></tr>
+          <tr><td><strong>Frigorífico Sur</strong><div class="plant">Irapuato</div></td><td><span class="badge b-storage">▪ BESS</span></td><td class="num">7/13</td><td><span class="owner"><span class="ava">MR</span>M. Ruiz</span></td><td class="num" style="text-align:right">5,200,000</td><td><span class="badge b-solar">Open</span></td></tr>
+          <tr><td><strong>Molinos del Valle</strong><div class="plant">León</div></td><td><span class="badge b-both">◆ Solar+BESS</span></td><td class="num">13/13</td><td><span class="owner"><span class="ava">DL</span>D. Lucca</span></td><td class="num" style="text-align:right">4,100,000</td><td><span class="badge b-success">Activo</span></td></tr>
+          <tr><td><strong>Grupo Textil MX</strong><div class="plant">Puebla</div></td><td><span class="badge b-storage">▪ BESS</span></td><td class="num">3/13</td><td><span class="owner"><span class="ava">MR</span>M. Ruiz</span></td><td class="num" style="text-align:right">1,150,000</td><td><span class="badge b-danger">Lost</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+  const html=document.documentElement, btn=document.getElementById('t');
+  const set=t=>{html.dataset.theme=t;try{localStorage.setItem('mex-theme',t)}catch(e){}};
+  set(localStorage.getItem('mex-theme')|| (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+  btn.onclick=()=>set(html.dataset.theme==='dark'?'light':'dark');
+</script>
+</body>
+</html>

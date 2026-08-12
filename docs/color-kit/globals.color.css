@@ -1,0 +1,189 @@
+/* Destino: fusionar en app/globals.css (Tailwind v4, CSS-first).
+   Complementa la tipografía (docs/typography-kit/globals.css). Todo el color
+   vive aquí: neutros cálidos + polos de marca (solar/storage) + semántica +
+   escalas de dominio + mapeo shadcn. Valores en OKLCH.
+   Ver docs/color-spec.md para el racional. */
+
+/* ─────────────────────────────────────────────────────────────
+   1. Tokens crudos de marca — LIGHT (default) y DARK (.dark)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Neutros cálidos (tinte hacia ámbar solar; nunca gris puro) */
+  --bg:            oklch(0.985 0.006 80);
+  --surface:       oklch(0.998 0.003 85);
+  --surface-2:     oklch(0.965 0.006 78);
+  --ink:           oklch(0.26  0.014 60);
+  --muted:         oklch(0.50  0.016 62);
+  --faint:         oklch(0.64  0.014 65);
+  --line:          oklch(0.90  0.008 72);
+  --line-strong:   oklch(0.83  0.010 70);
+
+  /* Solar — primary / acento de marca (10%) */
+  --solar:         oklch(0.70  0.155 62);
+  --solar-strong:  oklch(0.62  0.160 55);
+  --solar-ink:     oklch(0.44  0.130 52);
+  --solar-wash:    oklch(0.955 0.035 78);
+  --on-solar:      oklch(0.24  0.030 55);
+
+  /* Storage / BESS / info — secondary (polo frío) */
+  --storage:       oklch(0.50  0.110 214);
+  --storage-ink:   oklch(0.48  0.110 218);
+  --storage-wash:  oklch(0.955 0.025 220);
+  --on-storage:    oklch(0.99  0.005 220);
+
+  /* Semántica */
+  --success:       oklch(0.58  0.130 150);
+  --success-ink:   oklch(0.46  0.120 150);
+  --success-wash:  oklch(0.95  0.030 150);
+  --danger:        oklch(0.55  0.180 25);
+  --danger-ink:    oklch(0.50  0.190 25);
+  --danger-wash:   oklch(0.955 0.030 25);
+
+  /* Dominio: solution_type (extra a los polos) */
+  --sol-both:      oklch(0.56  0.095 258);
+
+  /* Dominio: stage_group (6) — temperatura del deal */
+  --group-lead:    oklch(0.62  0.045 240);
+  --group-qual:    oklch(0.58  0.095 214);
+  --group-solution:oklch(0.60  0.100 196);
+  --group-commercial: oklch(0.70 0.150 62);
+  --group-delivery:oklch(0.66  0.155 40);
+  --group-active:  oklch(0.60  0.130 150);
+
+  /* Dominio: potencial_general (heatmap secuencial cálido) */
+  --pot-bajo:      oklch(0.74  0.045 72);
+  --pot-medio:     oklch(0.72  0.105 66);
+  --pot-alto:      oklch(0.69  0.150 58);
+  --pot-muyalto:   oklch(0.64  0.175 46);
+
+  --radius: 0.625rem;
+}
+
+.dark {
+  --bg:            oklch(0.185 0.010 66);
+  --surface:       oklch(0.225 0.012 66);
+  --surface-2:     oklch(0.265 0.013 66);
+  --ink:           oklch(0.94  0.008 82);
+  --muted:         oklch(0.71  0.012 78);
+  --faint:         oklch(0.56  0.012 70);
+  --line:          oklch(0.31  0.012 68);
+  --line-strong:   oklch(0.41  0.014 68);
+
+  --solar:         oklch(0.78  0.150 68);
+  --solar-strong:  oklch(0.84  0.140 70);
+  --solar-ink:     oklch(0.82  0.130 70);
+  --solar-wash:    oklch(0.30  0.055 66);
+  --on-solar:      oklch(0.20  0.030 60);
+
+  --storage:       oklch(0.66  0.110 212);
+  --storage-ink:   oklch(0.74  0.100 214);
+  --storage-wash:  oklch(0.30  0.040 220);
+  --on-storage:    oklch(0.16  0.020 220);
+
+  --success:       oklch(0.72  0.140 152);
+  --success-ink:   oklch(0.78  0.120 152);
+  --success-wash:  oklch(0.30  0.050 152);
+  --danger:        oklch(0.68  0.170 25);
+  --danger-ink:    oklch(0.76  0.150 25);
+  --danger-wash:   oklch(0.30  0.060 25);
+
+  --sol-both:      oklch(0.68  0.090 262);
+
+  --group-lead:    oklch(0.68  0.050 240);
+  --group-qual:    oklch(0.68  0.100 214);
+  --group-solution:oklch(0.70  0.100 196);
+  --group-commercial: oklch(0.80 0.140 66);
+  --group-delivery:oklch(0.74  0.150 42);
+  --group-active:  oklch(0.72  0.130 152);
+
+  --pot-bajo:      oklch(0.60  0.040 72);
+  --pot-medio:     oklch(0.66  0.100 66);
+  --pot-alto:      oklch(0.74  0.150 58);
+  --pot-muyalto:   oklch(0.80  0.170 50);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. Puente a shadcn/ui — sus tokens apuntan a los de arriba.
+   La mayoría de componentes shadcn heredan sin tocarse.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --background:            var(--bg);
+  --foreground:            var(--ink);
+  --card:                  var(--surface);
+  --card-foreground:       var(--ink);
+  --popover:               var(--surface);
+  --popover-foreground:    var(--ink);
+  --primary:               var(--solar);
+  --primary-foreground:    var(--on-solar);
+  --secondary:             var(--surface-2);
+  --secondary-foreground:  var(--ink);
+  --muted-bg:              var(--surface-2);
+  --muted-foreground:      var(--muted);
+  --accent:                var(--solar-wash);
+  --accent-foreground:     var(--solar-ink);
+  --destructive:           var(--danger);
+  --destructive-foreground: oklch(0.99 0.005 60);
+  --border:                var(--line);
+  --input:                 var(--line-strong);
+  --ring:                  var(--solar);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. Exponer a Tailwind v4 — genera utilidades bg-*, text-*, border-*.
+   Fusionar con el @theme de tipografía existente.
+   ───────────────────────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-solar: var(--solar);
+  --color-solar-strong: var(--solar-strong);
+  --color-solar-ink: var(--solar-ink);
+  --color-solar-wash: var(--solar-wash);
+  --color-on-solar: var(--on-solar);
+
+  --color-storage: var(--storage);
+  --color-storage-ink: var(--storage-ink);
+  --color-storage-wash: var(--storage-wash);
+  --color-on-storage: var(--on-storage);
+
+  --color-success: var(--success);
+  --color-success-ink: var(--success-ink);
+  --color-success-wash: var(--success-wash);
+  --color-danger: var(--danger);
+  --color-danger-ink: var(--danger-ink);
+  --color-danger-wash: var(--danger-wash);
+
+  /* shadcn */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. Utilidades de dominio — badges de estado/estado con wash+ink.
+   ───────────────────────────────────────────────────────────── */
+@layer components {
+  body { background: var(--bg); color: var(--ink); }
+
+  /* Badge base: fondo wash + texto ink de la misma familia (nunca gris lavado). */
+  .badge { display: inline-flex; align-items: center; gap: 0.35em;
+    padding: 0.15em 0.55em; border-radius: 999px; font-size: var(--text-2xs);
+    font-weight: 600; }
+  .badge-solar   { background: var(--solar-wash);   color: var(--solar-ink); }
+  .badge-storage { background: var(--storage-wash); color: var(--storage-ink); }
+  .badge-success { background: var(--success-wash); color: var(--success-ink); }
+  .badge-danger  { background: var(--danger-wash);  color: var(--danger-ink); }
+  .badge-neutral { background: var(--surface-2);    color: var(--muted); }
+}
