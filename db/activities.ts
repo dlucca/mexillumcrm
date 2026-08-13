@@ -51,3 +51,29 @@ export async function lastActivityByProject(db: AnyDb): Promise<Map<string, Date
   for (const r of rows) map.set(r.projectId, new Date(r.last));
   return map;
 }
+
+// Última actividad (max occurred_at) por empresa. Empresas sin actividad no aparecen.
+export async function lastActivityByCompany(db: AnyDb): Promise<Map<string, Date>> {
+  const rows = await db
+    .select({
+      companyId: activities.companyId,
+      last: sql<Date>`max(${activities.occurredAt})`,
+    })
+    .from(activities)
+    .groupBy(activities.companyId);
+  const map = new Map<string, Date>();
+  for (const r of rows) map.set(r.companyId, new Date(r.last));
+  return map;
+}
+
+// Actividades de una empresa (todas sus plantas), más recientes primero.
+export async function listActivitiesForCompany(
+  db: AnyDb,
+  companyId: string
+): Promise<Activity[]> {
+  return db
+    .select()
+    .from(activities)
+    .where(eq(activities.companyId, companyId))
+    .orderBy(desc(activities.occurredAt), desc(activities.createdAt));
+}
