@@ -4,7 +4,15 @@ import { useRouter } from "next/navigation";
 import { STAGES, STAGE_GROUPS, stageGroupFor } from "@/lib/project-pipeline";
 import { moveStageAction } from "@/app/projects/actions";
 
-export function CardStageSelect({ projectId, stage }: { projectId: string; stage: string }) {
+export function CardStageSelect({
+  projectId,
+  projectName,
+  stage,
+}: {
+  projectId: string;
+  projectName: string;
+  stage: string;
+}) {
   const router = useRouter();
 
   async function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -19,6 +27,7 @@ export function CardStageSelect({ projectId, stage }: { projectId: string; stage
 
   return (
     <select
+      aria-label={`Etapa de ${projectName}`}
       defaultValue={stage}
       onChange={onChange}
       className="w-full rounded-md border px-2 py-1 text-xs"

@@ -33,7 +33,7 @@ export function ProjectCard({
         {nextActionTitle ? `▸ ${nextActionTitle}` : "sin próxima acción"}
       </p>
       <div className="mt-2">
-        <CardStageSelect projectId={project.id} stage={project.stage} />
+        <CardStageSelect projectId={project.id} projectName={project.name} stage={project.stage} />
       </div>
     </div>
   );
