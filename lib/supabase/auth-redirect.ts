@@ -3,7 +3,7 @@
  * Pure and framework-free so it can be unit-tested in isolation.
  *
  * - Unauthenticated users on any non-/login route → "/login".
- * - Authenticated users on /login → "/my-actions".
+ * - Authenticated users on /login → "/dashboard".
  * - Otherwise no redirect (null). The root "/" for authenticated users is left
  *   to the page-level redirect in app/page.tsx.
  */
@@ -13,6 +13,6 @@ export function authRedirectTarget(
 ): string | null {
   const onLogin = pathname.startsWith("/login");
   if (!isAuthed && !onLogin) return "/login";
-  if (isAuthed && onLogin) return "/my-actions";
+  if (isAuthed && onLogin) return "/dashboard";
   return null;
 }

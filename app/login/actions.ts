@@ -13,7 +13,7 @@ export async function login(
     password: String(formData.get("password")),
   });
   if (error) return { error: "Credenciales inválidas" };
-  redirect("/my-actions");
+  redirect("/dashboard");
 }
 
 export async function signOut() {
