@@ -71,9 +71,11 @@ function initialsFromEmail(email: string | null): string {
 export function AppShell({
   user,
   children,
+  actionCount = 0,
 }: {
   user: { email: string | null } | null;
   children: ReactNode;
+  actionCount?: number;
 }) {
   const pathname = usePathname() ?? "";
   if (pathname === "/login") return <>{children}</>;
@@ -106,6 +108,7 @@ export function AppShell({
           {NAV.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const badge = item.href === "/my-actions" ? actionCount : 0;
             return (
               <Link
                 key={item.href}
@@ -117,7 +120,16 @@ export function AppShell({
                 }`}
               >
                 {item.icon}
-                {item.label}
+                <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                {badge > 0 && (
+                  <span
+                    className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-solar px-1.5 font-mono text-[0.68rem] font-semibold tabular-nums text-on-solar"
+                    aria-label={`${badge} acciones vencidas o de hoy`}
+                    title={`${badge} vencidas o de hoy`}
+                  >
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
               </Link>
             );
           })}

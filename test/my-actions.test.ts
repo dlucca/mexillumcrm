@@ -4,6 +4,7 @@ import {
   addDays,
   bucketTasksByDueDate,
   projectsMissingNextAction,
+  countOverdueAndToday,
 } from "@/lib/my-actions";
 
 describe("todayInMexicoCity", () => {
@@ -32,6 +33,24 @@ describe("bucketTasksByDueDate", () => {
     expect(r.overdue.map((t) => t.dueDate)).toEqual(["2026-09-01"]);
     expect(r.dueToday.map((t) => t.dueDate)).toEqual(["2026-09-08"]);
     expect(r.upcoming.map((t) => t.dueDate)).toEqual(["2026-09-10", "2026-09-15"]); // día 7 incluido, 16 excluido
+  });
+});
+
+describe("countOverdueAndToday", () => {
+  const today = "2026-08-13";
+  it("cuenta tareas vencidas y de hoy, excluye futuras", () => {
+    const tasks = [
+      { dueDate: "2026-08-10" }, // vencida
+      { dueDate: "2026-08-12" }, // vencida
+      { dueDate: "2026-08-13" }, // hoy
+      { dueDate: "2026-08-14" }, // futura → no cuenta
+    ];
+    expect(countOverdueAndToday(tasks, today)).toBe(3);
+  });
+
+  it("devuelve 0 con lista vacía o solo futuras", () => {
+    expect(countOverdueAndToday([], today)).toBe(0);
+    expect(countOverdueAndToday([{ dueDate: "2026-12-01" }], today)).toBe(0);
   });
 });
 

@@ -31,6 +31,17 @@ export function bucketTasksByDueDate<T extends { dueDate: string }>(
   return { overdue, dueToday, upcoming };
 }
 
+// Cuenta tareas accionables ya (due_date <= today): vencidas + de hoy. Se usa para
+// el badge de "Siguientes acciones" en el sidebar.
+export function countOverdueAndToday<T extends { dueDate: string }>(
+  tasks: T[],
+  today: string
+): number {
+  let n = 0;
+  for (const t of tasks) if (t.dueDate <= today) n++;
+  return n;
+}
+
 // Projects `open` (no archivados) sin ninguna task abierta.
 export function projectsMissingNextAction<P extends { id: string; status: string }>(
   openProjects: P[],
