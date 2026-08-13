@@ -64,3 +64,54 @@ export function parsePipelineFilters(sp: SP): PipelineFilters {
 export function hasActiveFilters(f: PipelineFilters): boolean {
   return Object.values(f).some((v) => v !== null);
 }
+
+export type FilterableProject = {
+  stage: string;
+  stageGroup: string;
+  solutionType: string;
+  status: string;
+  estimatedValue: number | null;
+  expectedCloseDate: string | null;
+  name: string;
+  companyName: string;
+  plantName: string | null;
+};
+
+function normalizeText(s: string): string {
+  // \u0300-\u036f = bloque de marcas diacríticas combinantes (quita acentos tras NFD)
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+export function matchesFilters(p: FilterableProject, f: PipelineFilters): boolean {
+  if (f.stage && p.stage !== f.stage) return false;
+  if (f.group && p.stageGroup !== f.group) return false;
+  if (f.solution && p.solutionType !== f.solution) return false;
+  if (f.status && p.status !== f.status) return false;
+
+  if (f.valueMin != null || f.valueMax != null) {
+    if (p.estimatedValue == null) return false;
+    if (f.valueMin != null && p.estimatedValue < f.valueMin) return false;
+    if (f.valueMax != null && p.estimatedValue > f.valueMax) return false;
+  }
+
+  if (f.closeFrom != null || f.closeTo != null) {
+    if (p.expectedCloseDate == null) return false;
+    if (f.closeFrom != null && p.expectedCloseDate < f.closeFrom) return false;
+    if (f.closeTo != null && p.expectedCloseDate > f.closeTo) return false;
+  }
+
+  if (f.q) {
+    const needle = normalizeText(f.q);
+    const hay = [p.name, p.companyName, p.plantName ?? ""].map(normalizeText);
+    if (!hay.some((h) => h.includes(needle))) return false;
+  }
+
+  return true;
+}
+
+export function filterProjects<P extends FilterableProject>(
+  projects: P[],
+  f: PipelineFilters
+): P[] {
+  return projects.filter((p) => matchesFilters(p, f));
+}
