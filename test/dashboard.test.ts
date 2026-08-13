@@ -6,6 +6,7 @@ import {
   solutionMix,
   conversionRate,
   pipelineHealth,
+  weightedPipelineValue,
 } from "@/lib/dashboard";
 
 describe("pipelineByStage", () => {
@@ -123,6 +124,21 @@ describe("conversionRate", () => {
     expect(r.won).toBe(0);
     expect(r.lost).toBe(0);
     expect(r.rate).toBeNull();
+  });
+});
+
+describe("weightedPipelineValue", () => {
+  it("suma value*probabilidad/100; value o prob null → aporta 0", () => {
+    const v = weightedPipelineValue([
+      { estimatedValue: 1000, probability: 50 },
+      { estimatedValue: 2000, probability: null },
+      { estimatedValue: null, probability: 80 },
+      { estimatedValue: 400, probability: 100 },
+    ]);
+    expect(v).toBe(900); // 500 + 0 + 0 + 400
+  });
+  it("lista vacía → 0", () => {
+    expect(weightedPipelineValue([])).toBe(0);
   });
 });
 

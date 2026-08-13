@@ -87,6 +87,17 @@ export function conversionRate(projects: { status: string }[]): ConversionRate {
   return { won, lost, rate: closed > 0 ? won / closed : null };
 }
 
+// ── Valor ponderado por probabilidad ───────────────────────────
+// Σ(valor × probabilidad/100). valor o probabilidad null aportan 0.
+export function weightedPipelineValue(
+  projects: { estimatedValue: number | null; probability: number | null }[]
+): number {
+  return projects.reduce(
+    (sum, p) => sum + (p.estimatedValue ?? 0) * ((p.probability ?? 0) / 100),
+    0
+  );
+}
+
 // ── Salud del pipeline (solo proyectos open) ───────────────────
 // atRisk: tiene task vencida.  momentum: última actividad dentro de la ventana.
 // stale: resto (inactivo hace >staleDays o sin actividad).
