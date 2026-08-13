@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mexillum CRM — Proyectos (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --font-body: "Barlow", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --bg: oklch(0.985 0.006 80);
+    --surface: oklch(0.998 0.003 85);
+    --surface-2: oklch(0.965 0.006 78);
+    --ink: oklch(0.26 0.014 60);
+    --muted: oklch(0.50 0.016 62);
+    --faint: oklch(0.64 0.014 65);
+    --line: oklch(0.90 0.008 72);
+    --line-strong: oklch(0.83 0.010 70);
+
+    --solar: oklch(0.70 0.155 62);
+    --solar-ink: oklch(0.44 0.130 52);
+    --solar-wash: oklch(0.955 0.035 78);
+    --on-solar: oklch(0.24 0.030 55);
+
+    --storage: oklch(0.50 0.110 214);
+    --storage-ink: oklch(0.48 0.110 218);
+    --storage-wash: oklch(0.955 0.025 220);
+
+    --success: oklch(0.58 0.130 150);
+    --success-ink: oklch(0.46 0.120 150);
+    --success-wash: oklch(0.95 0.030 150);
+    --danger: oklch(0.55 0.180 25);
+    --danger-ink: oklch(0.50 0.190 25);
+    --danger-wash: oklch(0.955 0.030 25);
+
+    --sol-both: oklch(0.56 0.095 258);
+
+    --group-lead: oklch(0.62 0.045 240);
+    --group-qual: oklch(0.58 0.095 214);
+    --group-solution: oklch(0.60 0.100 196);
+    --group-commercial: oklch(0.70 0.150 62);
+    --group-delivery: oklch(0.66 0.155 40);
+    --group-active: oklch(0.60 0.130 150);
+
+    --pot-bajo: oklch(0.74 0.045 72);
+    --pot-medio: oklch(0.72 0.105 66);
+    --pot-alto: oklch(0.69 0.150 58);
+    --pot-muyalto: oklch(0.64 0.175 46);
+
+    --nav-bg: oklch(0.255 0.016 62);
+    --nav-surface: oklch(0.305 0.017 62);
+    --nav-ink: oklch(0.93 0.010 82);
+    --nav-muted: oklch(0.68 0.014 72);
+    --nav-line: oklch(0.36 0.014 64);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; -webkit-font-smoothing: antialiased; }
+  .data { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .app { display: grid; grid-template-columns: 232px 1fr; height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .nav { background: var(--nav-bg); color: var(--nav-ink); display: flex; flex-direction: column; padding: 1.4rem 0; }
+  .brand { display: flex; align-items: center; gap: 0.6rem; padding: 0 1.35rem 1.5rem; }
+  .brand .mark { width: 30px; height: 30px; border-radius: 8px; background: var(--solar); position: relative; flex: none; }
+  .brand .mark::after { content: ""; position: absolute; inset: 8px; border-radius: 3px; background: var(--nav-bg); clip-path: polygon(0 100%, 55% 0, 55% 55%, 100% 55%, 100% 100%); }
+  .brand .name { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand .name small { display: block; font-family: var(--font-display); font-weight: 600; font-size: 0.5rem; letter-spacing: 0.24em; color: var(--nav-muted); margin-top: 2px; }
+  .nav-label { font-family: var(--font-display); font-weight: 600; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nav-muted); padding: 0 1.35rem; margin: 1.3rem 0 0.5rem; }
+  .nav a { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 1.35rem; color: var(--nav-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-left: 2.5px solid transparent; }
+  .nav a .ico { width: 16px; height: 16px; flex: none; opacity: 0.85; }
+  .nav a:hover { color: var(--nav-ink); }
+  .nav a.active { color: var(--nav-ink); background: var(--nav-surface); border-left-color: var(--solar); }
+  .nav a .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.7rem; background: var(--danger); color: #fff; border-radius: 999px; padding: 0.05rem 0.4rem; }
+  .nav .spacer { flex: 1; }
+  .nav .user { display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1.35rem 0; margin-top: 1rem; border-top: 1px solid var(--nav-line); }
+  .avatar { width: 30px; height: 30px; border-radius: 999px; background: var(--solar-wash); color: var(--solar-ink); font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; display: grid; place-items: center; flex: none; }
+  .user .who b { font-weight: 600; font-size: 0.82rem; } .user .who span { display: block; font-size: 0.68rem; color: var(--nav-muted); }
+
+  /* ── MAIN ── */
+  .main { min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding: 1.35rem 1.9rem 1.1rem; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--solar-ink); }
+  .topbar h1 { font-family: var(--font-display); font-weight: 700; font-size: 2.05rem; line-height: 1.02; letter-spacing: -0.005em; margin-top: 2px; }
+  .totals { display: flex; gap: 1.7rem; align-items: flex-end; }
+  .tot .k { font-family: var(--font-display); font-weight: 600; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .tot .v { font-family: var(--font-mono); font-weight: 500; font-size: 1.15rem; margin-top: 1px; }
+  .tot.alert .v { color: var(--danger-ink); }
+  .btn { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.01em; border: none; border-radius: 8px; padding: 0.55rem 0.95rem; background: var(--solar); color: var(--on-solar); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  /* Filters */
+  .filters { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.9rem; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .toggle { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; }
+  .toggle button { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; border: none; background: transparent; color: var(--muted); padding: 0.42rem 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+  .toggle button.on { background: var(--ink); color: var(--bg); }
+  .chip { font-size: 0.8rem; font-weight: 500; color: var(--ink); border: 1px solid var(--line-strong); border-radius: 8px; padding: 0.42rem 0.7rem; background: var(--surface); display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+  .chip .car { color: var(--faint); font-size: 0.7rem; }
+  .chip.danger { border-color: color-mix(in oklch,var(--danger) 40%,var(--line)); background: var(--danger-wash); color: var(--danger-ink); }
+  .search { font-size: 0.82rem; color: var(--faint); border: 1px solid var(--line-strong); border-radius: 8px; padding: 0.42rem 0.7rem 0.42rem 1.9rem; background: var(--surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none' stroke='%239a9088' stroke-width='1.5'><circle cx='7' cy='7' r='4.5'/><path d='M11 11l3 3'/></svg>") no-repeat 0.6rem center; min-width: 210px; }
+  .filters .right { margin-left: auto; display: flex; align-items: center; gap: 0.6rem; }
+
+  /* ── TABLE ── */
+  .tablewrap { flex: 1; overflow: auto; padding: 0 1.9rem 2rem; }
+  table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+  thead th { position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  th { text-align: left; font-family: var(--font-display); font-weight: 600; font-size: 0.66rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); padding: 0.85rem 0.8rem; border-bottom: 1.5px solid var(--line-strong); white-space: nowrap; }
+  th.r, td.r { text-align: right; } th.c, td.c { text-align: center; }
+  td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:hover { background: var(--surface); }
+  tbody tr:hover .row-actions { opacity: 1; }
+
+  .proj .pn { font-family: var(--font-display); font-weight: 600; font-size: 0.94rem; line-height: 1.12; }
+  .proj .meta { font-size: 0.71rem; color: var(--muted); display: flex; gap: 0.4rem; align-items: center; }
+  .proj .id { font-family: var(--font-mono); font-size: 0.63rem; color: var(--faint); }
+
+  .stagecell { min-width: 132px; }
+  .stagecell .top { display: flex; align-items: center; gap: 0.4rem; }
+  .stagecell .gp { font-family: var(--font-display); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stagecell .s { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
+  .prog { height: 4px; border-radius: 3px; background: var(--line); overflow: hidden; margin-top: 4px; }
+  .prog > i { display: block; height: 100%; border-radius: 3px; }
+
+  .sol { font-size: 0.6rem; font-weight: 600; padding: 0.1rem 0.42rem; border-radius: 999px; white-space: nowrap; }
+  .sol-solar { background: var(--solar-wash); color: var(--solar-ink); }
+  .sol-bess { background: var(--storage-wash); color: var(--storage-ink); }
+  .sol-both { background: color-mix(in oklch, var(--sol-both) 15%, white); color: var(--sol-both); }
+
+  .val { font-family: var(--font-mono); font-weight: 500; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .val .u { font-size: 0.6rem; color: var(--muted); }
+  .valusd { font-family: var(--font-mono); font-size: 0.64rem; color: var(--faint); }
+
+  .pot { display: inline-flex; align-items: center; gap: 0.3rem; font-family: var(--font-mono); font-weight: 500; font-size: 0.86rem; }
+  .pot .pd { width: 9px; height: 9px; border-radius: 3px; }
+
+  .gate { display: inline-flex; align-items: center; gap: 0.28rem; font-size: 0.66rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 999px; white-space: nowrap; }
+  .gate.ok { background: var(--success-wash); color: var(--success-ink); }
+  .gate.pend { background: var(--solar-wash); color: var(--solar-ink); }
+
+  .na { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
+  .due { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 500; padding: 0.1rem 0.38rem; border-radius: 5px; white-space: nowrap; background: var(--surface-2); color: var(--muted); }
+  .due.over { background: var(--danger-wash); color: var(--danger-ink); }
+  .due.today { background: var(--solar-wash); color: var(--solar-ink); }
+  .na .t { font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .mini-av { width: 26px; height: 26px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--muted); font-family: var(--font-display); font-weight: 700; font-size: 0.66rem; display: grid; place-items: center; }
+
+  .badge { display: inline-flex; align-items: center; gap: 0.35em; padding: 0.16em 0.55em; border-radius: 999px; font-size: 0.66rem; font-weight: 600; white-space: nowrap; }
+  .badge .bd { width: 6px; height: 6px; border-radius: 999px; }
+  .b-open { background: var(--surface-2); color: var(--muted); }
+  .b-active { background: var(--success-wash); color: var(--success-ink); }
+  .b-blocked { background: var(--danger-wash); color: var(--danger-ink); }
+
+  .row-actions { display: inline-flex; gap: 0.15rem; opacity: 0; transition: opacity .12s; }
+  .iconbtn { width: 27px; height: 27px; border-radius: 7px; border: 1px solid transparent; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
+  .iconbtn:hover { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
+  .iconbtn.del:hover { color: var(--danger-ink); border-color: color-mix(in oklch,var(--danger) 40%,var(--line)); background: var(--danger-wash); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="nav">
+    <div class="brand"><div class="mark"></div><div class="name">Mexillum<small>CRM · SOLAR + BESS</small></div></div>
+    <div class="nav-label">Operación</div>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>Dashboard</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3h4v10H2zM6 3h4v6H6zM10 3h4v8h-4z"/></svg>Pipeline</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13V6l6-4 6 4v7M6 13V9h4v4"/></svg>Empresas</a>
+    <a class="active" href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5" r="2.5"/><path d="M3 13.5c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/></svg>Proyectos</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 4v4l2.5 1.5"/><circle cx="8" cy="8" r="6.5"/></svg>Siguientes acciones<span class="count">3</span></a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14V2M2 14h12M5 11l3-4 2.5 2L14 4"/></svg>Reportes</a>
+    <div class="spacer"></div>
+    <div class="nav-label">Cuenta</div>
+    <div class="user"><div class="avatar">DA</div><div class="who"><b>Diego A.</b><span>Director comercial</span></div></div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Plantas · una planta = un proyecto</div>
+        <h1>Proyectos</h1>
+      </div>
+      <div class="totals">
+        <div class="tot"><div class="k">Proyectos</div><div class="v">37</div></div>
+        <div class="tot"><div class="k">Valor pipeline</div><div class="v">$48.2M <span style="color:var(--muted);font-size:.8rem">MXN</span></div></div>
+        <div class="tot alert"><div class="k">Sin siguiente acción</div><div class="v">3</div></div>
+        <button class="btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v10M2 7h10"/></svg>Nuevo proyecto</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="toggle">
+        <button class="on"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M2 8h12M2 12h12"/></svg>Tabla</button>
+        <button><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="4" height="14" rx="1"/><rect x="6" y="1" width="4" height="9" rx="1"/><rect x="11" y="1" width="4" height="11" rx="1"/></svg>Kanban</button>
+      </div>
+      <span class="chip">Etapa <span class="car">▾</span></span>
+      <span class="chip">Solución <span class="car">▾</span></span>
+      <span class="chip">Responsable <span class="car">▾</span></span>
+      <span class="chip danger">⚠ Sin siguiente acción</span>
+      <div class="right">
+        <span class="search">Buscar proyecto, planta…</span>
+        <span class="chip">Orden: Valor ↓ <span class="car">▾</span></span>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Proyecto</th>
+            <th>Etapa</th>
+            <th>Solución</th>
+            <th class="r">Valor</th>
+            <th class="c">Potencial</th>
+            <th class="c">Datos</th>
+            <th>Siguiente acción</th>
+            <th class="c">Resp.</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 1 Textiles del Norte -->
+          <tr>
+            <td><div class="proj"><div class="pn">Textiles del Norte</div><div class="meta">Monterrey · NL <span class="id">PRJ-0038</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-commercial)">Comercial</span><span class="s">08/13</span></div><div class="prog"><i style="width:62%;background:var(--group-commercial)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$12,750,000 <span class="u">MXN</span></div><div class="valusd">≈ $708,300 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-muyalto)"></span>91</span></td>
+            <td class="c"><span class="gate ok">✓ Completo</span></td>
+            <td><div class="na"><span class="due today">Hoy</span><span class="t">Llamada de cierre</span></div></td>
+            <td class="c"><span class="mini-av">MP</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 2 Alcázar Saltillo -->
+          <tr>
+            <td><div class="proj"><div class="pn">Grupo Alcázar — Saltillo</div><div class="meta">Saltillo · Coah <span class="id">PRJ-0042</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-commercial)">Comercial</span><span class="s">07/13</span></div><div class="prog"><i style="width:54%;background:var(--group-commercial)"></i></div></div></td>
+            <td><span class="sol sol-both">Solar+BESS</span></td>
+            <td class="r"><div class="val">$3,240,000 <span class="u">MXN</span></div><div class="valusd">≈ $180,000 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>82</span></td>
+            <td class="c"><span class="gate ok">✓ Completo</span></td>
+            <td><div class="na"><span class="due over">Ayer</span><span class="t">Enviar propuesta rev.</span></div></td>
+            <td class="c"><span class="mini-av">AR</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 3 Hospital León -->
+          <tr>
+            <td><div class="proj"><div class="pn">Hospital Reg. Bajío — León</div><div class="meta">León · Gto <span class="id">PRJ-0047</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-solution)">Solución</span><span class="s">06/13</span></div><div class="prog"><i style="width:46%;background:var(--group-solution)"></i></div></div></td>
+            <td><span class="sol sol-both">Solar+BESS</span></td>
+            <td class="r"><div class="val">$2,840,000 <span class="u">MXN</span></div><div class="valusd">≈ $157,800 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-muyalto)"></span>88</span></td>
+            <td class="c"><span class="gate pend">⚠ 2 faltan</span></td>
+            <td><div class="na"><span class="due">14 ago</span><span class="t">Recibir datos CFE</span></div></td>
+            <td class="c"><span class="mini-av">AR</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 4 Frigoríficos Delta -->
+          <tr>
+            <td><div class="proj"><div class="pn">Frigoríficos Delta</div><div class="meta">Irapuato · Gto <span class="id">PRJ-0051</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-solution)">Solución</span><span class="s">05/13</span></div><div class="prog"><i style="width:38%;background:var(--group-solution)"></i></div></div></td>
+            <td><span class="sol sol-bess">BESS</span></td>
+            <td class="r"><div class="val">$4,100,000 <span class="u">MXN</span></div><div class="valusd">≈ $227,800 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>73</span></td>
+            <td class="c"><span class="gate pend">⚠ 1 falta</span></td>
+            <td><div class="na"><span class="due">19 ago</span><span class="t">Análisis de carga</span></div></td>
+            <td class="c"><span class="mini-av">AR</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 5 Alcázar Ramos Arizpe -->
+          <tr>
+            <td><div class="proj"><div class="pn">Grupo Alcázar — Ramos Arizpe</div><div class="meta">Ramos Arizpe · Coah <span class="id">PRJ-0055</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-solution)">Solución</span><span class="s">05/13</span></div><div class="prog"><i style="width:38%;background:var(--group-solution)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$3,100,000 <span class="u">MXN</span></div><div class="valusd">≈ $172,200 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>70</span></td>
+            <td class="c"><span class="gate pend">⚠ 3 faltan</span></td>
+            <td><div class="na"><span class="due">19 ago</span><span class="t">Solicitar recibos CFE</span></div></td>
+            <td class="c"><span class="mini-av">AR</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 6 Cementos del Golfo -->
+          <tr>
+            <td><div class="proj"><div class="pn">Cementos del Golfo</div><div class="meta">Tampico · Tamps <span class="id">PRJ-0058</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-lead)">Lead</span><span class="s">01/13</span></div><div class="prog"><i style="width:8%;background:var(--group-lead)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$1,850,000 <span class="u">MXN</span></div><div class="valusd">≈ $102,800 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>78</span></td>
+            <td class="c"><span class="gate pend">⚠ 6 faltan</span></td>
+            <td><div class="na"><span class="due today">Hoy</span><span class="t">Primer contacto</span></div></td>
+            <td class="c"><span class="mini-av">MP</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 7 Parque Log Querétaro -->
+          <tr>
+            <td><div class="proj"><div class="pn">Parque Log. Querétaro</div><div class="meta">El Marqués · Qro <span class="id">PRJ-0044</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-delivery)">Entrega</span><span class="s">10/13</span></div><div class="prog"><i style="width:77%;background:var(--group-delivery)"></i></div></div></td>
+            <td><span class="sol sol-bess">BESS</span></td>
+            <td class="r"><div class="val">$1,420,000 <span class="u">MXN</span></div><div class="valusd">≈ $78,900 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>79</span></td>
+            <td class="c"><span class="gate ok">✓ Completo</span></td>
+            <td><div class="na"><span class="due">20 ago</span><span class="t">Firma de contrato</span></div></td>
+            <td class="c"><span class="mini-av">DA</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 8 Minera El Roble (blocked) -->
+          <tr>
+            <td><div class="proj"><div class="pn">Minera El Roble</div><div class="meta">Fresnillo · Zac <span class="id">PRJ-0052</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-qual)">Calificación</span><span class="s">04/13</span></div><div class="prog"><i style="width:31%;background:var(--group-qual)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$890,000 <span class="u">MXN</span></div><div class="valusd">≈ $49,400 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>64</span></td>
+            <td class="c"><span class="gate pend">⚠ 4 faltan</span></td>
+            <td><div class="na"><span class="due over">Vencido</span><span class="t">Sin respuesta 12d</span></div></td>
+            <td class="c"><span class="mini-av">AR</span></td>
+            <td><span class="badge b-blocked"><span class="bd" style="background:var(--danger)"></span>Bloqueado</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 9 Bodegas Refrimex -->
+          <tr>
+            <td><div class="proj"><div class="pn">Bodegas Refrimex</div><div class="meta">Guadalajara · Jal <span class="id">PRJ-0046</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-delivery)">Entrega</span><span class="s">11/13</span></div><div class="prog"><i style="width:85%;background:var(--group-delivery)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$980,000 <span class="u">MXN</span></div><div class="valusd">≈ $54,400 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>68</span></td>
+            <td class="c"><span class="gate ok">✓ Completo</span></td>
+            <td><div class="na"><span class="due">22 ago</span><span class="t">Reunión kickoff</span></div></td>
+            <td class="c"><span class="mini-av">DA</span></td>
+            <td><span class="badge b-open"><span class="bd" style="background:var(--muted)"></span>Abierto</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+          <!-- 10 Universidad TecNorte (activo) -->
+          <tr>
+            <td><div class="proj"><div class="pn">Universidad TecNorte — Campus 1</div><div class="meta">Apodaca · NL <span class="id">PRJ-0031</span></div></div></td>
+            <td><div class="stagecell"><div class="top"><span class="gp" style="color:var(--group-active)">Activo</span><span class="s">13/13</span></div><div class="prog"><i style="width:100%;background:var(--group-active)"></i></div></div></td>
+            <td><span class="sol sol-solar">Solar</span></td>
+            <td class="r"><div class="val">$980,000 <span class="u">MXN</span></div><div class="valusd">≈ $54,400 USD</div></td>
+            <td class="c"><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>74</span></td>
+            <td class="c"><span class="gate ok">✓ Completo</span></td>
+            <td><div class="na"><span class="due">Sep</span><span class="t">Revisión de desempeño</span></div></td>
+            <td class="c"><span class="mini-av">DA</span></td>
+            <td><span class="badge b-active"><span class="bd" style="background:var(--success)"></span>Activo</span></td>
+            <td><div class="row-actions"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2.5l2.5 2.5L6 12.5l-3 .5.5-3z"/></svg></button><button class="iconbtn del"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.5 9h6l.5-9"/></svg></button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mexillum CRM — Pipeline (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --font-body: "Barlow", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --bg: oklch(0.985 0.006 80);
+    --surface: oklch(0.998 0.003 85);
+    --surface-2: oklch(0.965 0.006 78);
+    --ink: oklch(0.26 0.014 60);
+    --muted: oklch(0.50 0.016 62);
+    --faint: oklch(0.64 0.014 65);
+    --line: oklch(0.90 0.008 72);
+    --line-strong: oklch(0.83 0.010 70);
+
+    --solar: oklch(0.70 0.155 62);
+    --solar-strong: oklch(0.62 0.160 55);
+    --solar-ink: oklch(0.44 0.130 52);
+    --solar-wash: oklch(0.955 0.035 78);
+    --on-solar: oklch(0.24 0.030 55);
+
+    --storage: oklch(0.50 0.110 214);
+    --storage-ink: oklch(0.48 0.110 218);
+    --storage-wash: oklch(0.955 0.025 220);
+
+    --success: oklch(0.58 0.130 150);
+    --success-ink: oklch(0.46 0.120 150);
+    --success-wash: oklch(0.95 0.030 150);
+    --danger: oklch(0.55 0.180 25);
+    --danger-ink: oklch(0.50 0.190 25);
+    --danger-wash: oklch(0.955 0.030 25);
+
+    --sol-both: oklch(0.56 0.095 258);
+
+    --group-lead: oklch(0.62 0.045 240);
+    --group-qual: oklch(0.58 0.095 214);
+    --group-solution: oklch(0.60 0.100 196);
+    --group-commercial: oklch(0.70 0.150 62);
+    --group-delivery: oklch(0.66 0.155 40);
+    --group-active: oklch(0.60 0.130 150);
+
+    --pot-bajo: oklch(0.74 0.045 72);
+    --pot-medio: oklch(0.72 0.105 66);
+    --pot-alto: oklch(0.69 0.150 58);
+    --pot-muyalto: oklch(0.64 0.175 46);
+
+    --nav-bg: oklch(0.255 0.016 62);
+    --nav-surface: oklch(0.305 0.017 62);
+    --nav-ink: oklch(0.93 0.010 82);
+    --nav-muted: oklch(0.68 0.014 72);
+    --nav-line: oklch(0.36 0.014 64);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; -webkit-font-smoothing: antialiased; }
+  .data { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .app { display: grid; grid-template-columns: 232px 1fr; height: 100vh; }
+
+  /* ── SIDEBAR (idéntico al dashboard) ── */
+  .nav { background: var(--nav-bg); color: var(--nav-ink); display: flex; flex-direction: column; padding: 1.4rem 0; }
+  .brand { display: flex; align-items: center; gap: 0.6rem; padding: 0 1.35rem 1.5rem; }
+  .brand .mark { width: 30px; height: 30px; border-radius: 8px; background: var(--solar); position: relative; flex: none; }
+  .brand .mark::after { content: ""; position: absolute; inset: 8px; border-radius: 3px; background: var(--nav-bg); clip-path: polygon(0 100%, 55% 0, 55% 55%, 100% 55%, 100% 100%); }
+  .brand .name { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand .name small { display: block; font-family: var(--font-display); font-weight: 600; font-size: 0.5rem; letter-spacing: 0.24em; color: var(--nav-muted); margin-top: 2px; }
+  .nav-label { font-family: var(--font-display); font-weight: 600; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nav-muted); padding: 0 1.35rem; margin: 1.3rem 0 0.5rem; }
+  .nav a { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 1.35rem; color: var(--nav-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-left: 2.5px solid transparent; }
+  .nav a .ico { width: 16px; height: 16px; flex: none; opacity: 0.85; }
+  .nav a:hover { color: var(--nav-ink); }
+  .nav a.active { color: var(--nav-ink); background: var(--nav-surface); border-left-color: var(--solar); }
+  .nav a .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.7rem; background: var(--danger); color: #fff; border-radius: 999px; padding: 0.05rem 0.4rem; }
+  .nav .spacer { flex: 1; }
+  .nav .user { display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1.35rem 0; margin-top: 1rem; border-top: 1px solid var(--nav-line); }
+  .avatar { width: 30px; height: 30px; border-radius: 999px; background: var(--solar-wash); color: var(--solar-ink); font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; display: grid; place-items: center; flex: none; }
+  .user .who b { font-weight: 600; font-size: 0.82rem; } .user .who span { display: block; font-size: 0.68rem; color: var(--nav-muted); }
+
+  /* ── MAIN ── */
+  .main { min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding: 1.35rem 1.75rem 1.1rem; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--solar-ink); }
+  .topbar h1 { font-family: var(--font-display); font-weight: 700; font-size: 2.05rem; line-height: 1.02; letter-spacing: -0.005em; margin-top: 2px; }
+  .topbar .totals { display: flex; gap: 1.6rem; align-items: flex-end; }
+  .tot .k { font-family: var(--font-display); font-weight: 600; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .tot .v { font-family: var(--font-mono); font-weight: 500; font-size: 1.15rem; margin-top: 1px; }
+  .btn { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.01em; border: none; border-radius: 8px; padding: 0.55rem 0.95rem; background: var(--solar); color: var(--on-solar); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  /* Filters */
+  .filters { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.75rem; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .toggle { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; }
+  .toggle button { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; border: none; background: transparent; color: var(--muted); padding: 0.42rem 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+  .toggle button.on { background: var(--ink); color: var(--bg); }
+  .chip { font-size: 0.8rem; font-weight: 500; color: var(--ink); border: 1px solid var(--line-strong); border-radius: 8px; padding: 0.42rem 0.7rem; background: var(--surface); display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+  .chip .car { color: var(--faint); font-size: 0.7rem; }
+  .chip.active { border-color: var(--solar); background: var(--solar-wash); color: var(--solar-ink); }
+  .chip .n { font-family: var(--font-mono); font-size: 0.68rem; background: var(--solar); color: var(--on-solar); border-radius: 999px; padding: 0 0.32rem; }
+  .search { font-size: 0.82rem; color: var(--faint); border: 1px solid var(--line-strong); border-radius: 8px; padding: 0.42rem 0.7rem; background: var(--surface); min-width: 170px; }
+  .filters .right { margin-left: auto; display: flex; align-items: center; gap: 0.6rem; }
+  .clearf { font-size: 0.78rem; color: var(--storage-ink); font-weight: 600; cursor: pointer; }
+
+  /* ── BOARD ── */
+  .board { flex: 1; overflow-x: auto; overflow-y: hidden; padding: 1rem 1.75rem 1.25rem; }
+  .cols { display: grid; grid-template-columns: repeat(6, minmax(196px, 1fr)); gap: 0.8rem; height: 100%; }
+  .col { display: flex; flex-direction: column; min-height: 0; }
+  .chead { display: flex; align-items: center; gap: 0.45rem; padding: 0 0.15rem 0.5rem; }
+  .chead .dot { width: 9px; height: 9px; border-radius: 999px; flex: none; }
+  .chead .cname { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .chead .cnt { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 0.05rem 0.4rem; }
+  .chead .csum { margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); font-weight: 500; }
+  .cstages { font-size: 0.62rem; color: var(--faint); font-family: var(--font-mono); padding: 0 0.15rem 0.5rem; margin-top: -0.35rem; }
+  .track { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 0.55rem; display: flex; flex-direction: column; gap: 0.55rem; overflow-y: auto; flex: 1; min-height: 0; }
+  .track::-webkit-scrollbar { width: 6px; } .track::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+
+  /* Card */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.6rem 0.65rem 0.55rem; display: flex; flex-direction: column; gap: 0.45rem; position: relative; box-shadow: 0 1px 2px oklch(0.5 0.02 60 / 0.05); cursor: grab; }
+  .card .toprow { display: flex; align-items: center; gap: 0.4rem; }
+  .sol { font-size: 0.6rem; font-weight: 600; padding: 0.1rem 0.42rem; border-radius: 999px; white-space: nowrap; }
+  .sol-solar { background: var(--solar-wash); color: var(--solar-ink); }
+  .sol-bess { background: var(--storage-wash); color: var(--storage-ink); }
+  .sol-both { background: color-mix(in oklch, var(--sol-both) 15%, white); color: var(--sol-both); }
+  .pot { margin-left: auto; display: inline-flex; align-items: center; gap: 0.28rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); }
+  .pot .pd { width: 8px; height: 8px; border-radius: 2px; }
+  .title { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; line-height: 1.08; }
+  .plant { font-size: 0.68rem; color: var(--muted); margin-top: -0.2rem; }
+  .amount { font-family: var(--font-mono); font-weight: 500; font-size: 0.98rem; font-variant-numeric: tabular-nums; }
+  .amount .u { font-size: 0.62rem; color: var(--muted); }
+  .usd { font-family: var(--font-mono); font-size: 0.66rem; color: var(--faint); margin-top: -0.15rem; }
+
+  .stage { display: flex; align-items: center; gap: 0.45rem; }
+  .stage .s { font-family: var(--font-mono); font-size: 0.64rem; color: var(--muted); white-space: nowrap; }
+  .prog { flex: 1; height: 4px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .prog > i { display: block; height: 100%; border-radius: 3px; }
+
+  .divider { height: 1px; background: var(--line); margin: 0.05rem 0; }
+  .next { display: flex; align-items: center; gap: 0.45rem; }
+  .due { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 500; padding: 0.08rem 0.36rem; border-radius: 5px; white-space: nowrap; background: var(--surface-2); color: var(--muted); }
+  .due.over { background: var(--danger-wash); color: var(--danger-ink); }
+  .due.today { background: var(--solar-wash); color: var(--solar-ink); }
+  .next .t { font-size: 0.72rem; color: var(--ink); line-height: 1.15; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .next .av { margin-left: auto; width: 19px; height: 19px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--muted); font-family: var(--font-display); font-weight: 700; font-size: 0.58rem; display: grid; place-items: center; flex: none; }
+
+  .gate { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.62rem; font-weight: 600; color: var(--solar-ink); background: var(--solar-wash); border-radius: 6px; padding: 0.12rem 0.4rem; align-self: flex-start; }
+  .blocked-tag { position: absolute; top: -6px; right: 8px; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--danger); border-radius: 5px; padding: 0.08rem 0.35rem; }
+  .card.blocked { border-color: color-mix(in oklch, var(--danger) 40%, var(--line)); }
+
+  .addcard { border: 1px dashed var(--line-strong); border-radius: 10px; padding: 0.5rem; text-align: center; font-size: 0.74rem; color: var(--faint); font-weight: 500; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="nav">
+    <div class="brand"><div class="mark"></div><div class="name">Mexillum<small>CRM · SOLAR + BESS</small></div></div>
+    <div class="nav-label">Operación</div>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>Dashboard</a>
+    <a class="active" href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3h4v10H2zM6 3h4v6H6zM10 3h4v8h-4z"/></svg>Pipeline</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13V6l6-4 6 4v7M6 13V9h4v4"/></svg>Empresas</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5" r="2.5"/><path d="M3 13.5c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/></svg>Proyectos</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 4v4l2.5 1.5"/><circle cx="8" cy="8" r="6.5"/></svg>Siguientes acciones<span class="count">3</span></a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14V2M2 14h12M5 11l3-4 2.5 2L14 4"/></svg>Reportes</a>
+    <div class="spacer"></div>
+    <div class="nav-label">Cuenta</div>
+    <div class="user"><div class="avatar">DA</div><div class="who"><b>Diego A.</b><span>Director comercial</span></div></div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Embudo comercial · Opción C</div>
+        <h1>Pipeline</h1>
+      </div>
+      <div class="totals">
+        <div class="tot"><div class="k">Valor total</div><div class="v">$48.2M <span style="color:var(--muted);font-size:.8rem">MXN</span></div></div>
+        <div class="tot"><div class="k">Proyectos</div><div class="v">37</div></div>
+        <div class="tot"><div class="k">Ponderado</div><div class="v">$21.6M</div></div>
+        <button class="btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v10M2 7h10"/></svg>Nuevo proyecto</button>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="toggle">
+        <button class="on"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="4" height="14" rx="1"/><rect x="6" y="1" width="4" height="9" rx="1"/><rect x="11" y="1" width="4" height="11" rx="1"/></svg>Kanban</button>
+        <button><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M2 8h12M2 12h12"/></svg>Lista</button>
+      </div>
+      <span class="chip active">Responsable: <b>Todos</b> <span class="n">2</span><span class="car">▾</span></span>
+      <span class="chip">Solución <span class="car">▾</span></span>
+      <span class="chip">Potencial <span class="car">▾</span></span>
+      <span class="chip">Estado: <b>Abiertos</b> <span class="car">▾</span></span>
+      <span class="clearf">Limpiar</span>
+      <div class="right">
+        <span class="search">Buscar proyecto…</span>
+        <span class="chip">Orden: Valor ↓ <span class="car">▾</span></span>
+      </div>
+    </div>
+
+    <!-- BOARD -->
+    <div class="board">
+      <div class="cols">
+
+        <!-- LEAD -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-lead)"></span><span class="cname">Lead</span><span class="cnt">9</span><span class="csum">$6.1M</span></div>
+          <div class="cstages">Etapas 1–2 · Nuevo · Contactado</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>78</span></div>
+              <div class="title">Cementos del Golfo</div><div class="plant">Planta Tampico</div>
+              <div class="amount">$1,850,000 <span class="u">MXN</span></div><div class="usd">≈ $102,800 USD</div>
+              <div class="stage"><span class="s">01 · Nuevo</span><div class="prog"><i style="width:8%;background:var(--group-lead)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due today">Hoy</span><span class="t">Primer contacto</span><span class="av">MP</span></div>
+            </div>
+            <div class="card">
+              <div class="toprow"><span class="sol sol-bess">BESS</span><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>61</span></div>
+              <div class="title">Agroindustrias Verde</div><div class="plant">Culiacán</div>
+              <div class="amount">$720,000 <span class="u">MXN</span></div><div class="usd">≈ $40,000 USD</div>
+              <div class="stage"><span class="s">02 · Contactado</span><div class="prog"><i style="width:15%;background:var(--group-lead)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">18 ago</span><span class="t">Enviar one-pager</span><span class="av">MP</span></div>
+            </div>
+            <div class="addcard">+ Agregar</div>
+          </div>
+        </div>
+
+        <!-- CALIFICACIÓN -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-qual)"></span><span class="cname">Calificación</span><span class="cnt">7</span><span class="csum">$8.9M</span></div>
+          <div class="cstages">Etapas 3–4 · Discovery · Calificado</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>64</span></div>
+              <div class="title">Minera El Roble</div><div class="plant">Zacatecas</div>
+              <div class="amount">$890,000 <span class="u">MXN</span></div><div class="usd">≈ $49,400 USD</div>
+              <div class="stage"><span class="s">03 · Discovery</span><div class="prog"><i style="width:23%;background:var(--group-qual)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">16 ago</span><span class="t">Agendar discovery</span><span class="av">MP</span></div>
+              <div class="gate">⚠ Faltan 4 datos p/ diagnóstico</div>
+            </div>
+            <div class="card blocked">
+              <span class="blocked-tag">Bloqueado</span>
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-bajo)"></span>42</span></div>
+              <div class="title">Comercial Peninsular</div><div class="plant">Mérida</div>
+              <div class="amount">$540,000 <span class="u">MXN</span></div><div class="usd">≈ $30,000 USD</div>
+              <div class="stage"><span class="s">04 · Calificado</span><div class="prog"><i style="width:31%;background:var(--group-qual)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due over">Vencido 9 ago</span><span class="t">Sin respuesta</span><span class="av">AR</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOLUCIÓN -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-solution)"></span><span class="cname">Solución</span><span class="cnt">6</span><span class="csum">$12.4M</span></div>
+          <div class="cstages">Etapas 5–6 · Diagnóstico · Ingeniería</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-both">Solar+BESS</span><span class="pot"><span class="pd" style="background:var(--pot-muyalto)"></span>88</span></div>
+              <div class="title">Hospital Reg. Bajío</div><div class="plant">León</div>
+              <div class="amount">$2,840,000 <span class="u">MXN</span></div><div class="usd">≈ $157,800 USD</div>
+              <div class="stage"><span class="s">06 · Ingeniería</span><div class="prog"><i style="width:46%;background:var(--group-solution)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">14 ago</span><span class="t">Recibir datos CFE</span><span class="av">AR</span></div>
+              <div class="gate">⚠ Faltan 2 datos p/ propuesta</div>
+            </div>
+            <div class="card">
+              <div class="toprow"><span class="sol sol-bess">BESS</span><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>73</span></div>
+              <div class="title">Frigoríficos Delta</div><div class="plant">Irapuato</div>
+              <div class="amount">$4,100,000 <span class="u">MXN</span></div><div class="usd">≈ $227,800 USD</div>
+              <div class="stage"><span class="s">05 · Diagnóstico</span><div class="prog"><i style="width:38%;background:var(--group-solution)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">19 ago</span><span class="t">Análisis de carga</span><span class="av">AR</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMERCIAL -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-commercial)"></span><span class="cname">Comercial</span><span class="cnt">8</span><span class="csum">$14.7M</span></div>
+          <div class="cstages">Etapas 7–9 · Propuesta · Negociación · Verbal</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-muyalto)"></span>91</span></div>
+              <div class="title">Textiles del Norte</div><div class="plant">Monterrey</div>
+              <div class="amount">$12,750,000 <span class="u">MXN</span></div><div class="usd">≈ $708,300 USD</div>
+              <div class="stage"><span class="s">08 · Negociación</span><div class="prog"><i style="width:62%;background:var(--group-commercial)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due today">Hoy</span><span class="t">Llamada de cierre</span><span class="av">MP</span></div>
+            </div>
+            <div class="card">
+              <div class="toprow"><span class="sol sol-both">Solar+BESS</span><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>82</span></div>
+              <div class="title">Grupo Alcázar</div><div class="plant">Saltillo</div>
+              <div class="amount">$3,240,000 <span class="u">MXN</span></div><div class="usd">≈ $180,000 USD</div>
+              <div class="stage"><span class="s">07 · Propuesta</span><div class="prog"><i style="width:54%;background:var(--group-commercial)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due over">Vencido ayer</span><span class="t">Enviar propuesta rev.</span><span class="av">AR</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-delivery)"></span><span class="cname">Entrega</span><span class="cnt">4</span><span class="csum">$3.8M</span></div>
+          <div class="cstages">Etapas 10–12 · Contrato · Kickoff · Implementación</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-bess">BESS</span><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>79</span></div>
+              <div class="title">Parque Log. Querétaro</div><div class="plant">El Marqués</div>
+              <div class="amount">$1,420,000 <span class="u">MXN</span></div><div class="usd">≈ $78,900 USD</div>
+              <div class="stage"><span class="s">10 · Contrato</span><div class="prog"><i style="width:77%;background:var(--group-delivery)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">20 ago</span><span class="t">Firma de contrato</span><span class="av">DA</span></div>
+            </div>
+            <div class="card">
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>68</span></div>
+              <div class="title">Bodegas Refrimex</div><div class="plant">Guadalajara</div>
+              <div class="amount">$980,000 <span class="u">MXN</span></div><div class="usd">≈ $54,400 USD</div>
+              <div class="stage"><span class="s">11 · Kickoff</span><div class="prog"><i style="width:85%;background:var(--group-delivery)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">22 ago</span><span class="t">Reunión kickoff</span><span class="av">DA</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVO -->
+        <div class="col">
+          <div class="chead"><span class="dot" style="background:var(--group-active)"></span><span class="cname">Activo</span><span class="cnt">3</span><span class="csum">$1.9M</span></div>
+          <div class="cstages">Etapa 13 · Operación</div>
+          <div class="track">
+            <div class="card">
+              <div class="toprow"><span class="sol sol-solar">Solar</span><span class="pot"><span class="pd" style="background:var(--pot-alto)"></span>74</span></div>
+              <div class="title">Universidad TecNorte</div><div class="plant">Apodaca</div>
+              <div class="amount">$980,000 <span class="u">MXN</span></div><div class="usd">≈ $54,400 USD</div>
+              <div class="stage"><span class="s">13 · Operación</span><div class="prog"><i style="width:100%;background:var(--group-active)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">Sep</span><span class="t">Revisión de desempeño</span><span class="av">DA</span></div>
+            </div>
+            <div class="card">
+              <div class="toprow"><span class="sol sol-bess">BESS</span><span class="pot"><span class="pd" style="background:var(--pot-medio)"></span>66</span></div>
+              <div class="title">Planta Embotelladora Sur</div><div class="plant">Puebla</div>
+              <div class="amount">$620,000 <span class="u">MXN</span></div><div class="usd">≈ $34,400 USD</div>
+              <div class="stage"><span class="s">13 · Operación</span><div class="prog"><i style="width:100%;background:var(--group-active)"></i></div></div>
+              <div class="divider"></div>
+              <div class="next"><span class="due">Oct</span><span class="t">Monitoreo trimestral</span><span class="av">DA</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

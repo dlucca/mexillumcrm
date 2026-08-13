@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mexillum CRM — Dashboard (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --font-body: "Barlow", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --bg: oklch(0.985 0.006 80);
+    --surface: oklch(0.998 0.003 85);
+    --surface-2: oklch(0.965 0.006 78);
+    --ink: oklch(0.26 0.014 60);
+    --muted: oklch(0.50 0.016 62);
+    --faint: oklch(0.64 0.014 65);
+    --line: oklch(0.90 0.008 72);
+    --line-strong: oklch(0.83 0.010 70);
+
+    --solar: oklch(0.70 0.155 62);
+    --solar-strong: oklch(0.62 0.160 55);
+    --solar-ink: oklch(0.44 0.130 52);
+    --solar-wash: oklch(0.955 0.035 78);
+    --on-solar: oklch(0.24 0.030 55);
+
+    --storage: oklch(0.50 0.110 214);
+    --storage-ink: oklch(0.48 0.110 218);
+    --storage-wash: oklch(0.955 0.025 220);
+
+    --success: oklch(0.58 0.130 150);
+    --success-ink: oklch(0.46 0.120 150);
+    --success-wash: oklch(0.95 0.030 150);
+    --danger: oklch(0.55 0.180 25);
+    --danger-ink: oklch(0.50 0.190 25);
+    --danger-wash: oklch(0.955 0.030 25);
+
+    --sol-both: oklch(0.56 0.095 258);
+
+    --group-lead: oklch(0.62 0.045 240);
+    --group-qual: oklch(0.58 0.095 214);
+    --group-solution: oklch(0.60 0.100 196);
+    --group-commercial: oklch(0.70 0.150 62);
+    --group-delivery: oklch(0.66 0.155 40);
+    --group-active: oklch(0.60 0.130 150);
+
+    --pot-alto: oklch(0.69 0.150 58);
+
+    /* Sidebar oscuro cálido (control-panel) */
+    --nav-bg: oklch(0.255 0.016 62);
+    --nav-surface: oklch(0.305 0.017 62);
+    --nav-ink: oklch(0.93 0.010 82);
+    --nav-muted: oklch(0.68 0.014 72);
+    --nav-line: oklch(0.36 0.014 64);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; -webkit-font-smoothing: antialiased; }
+  .data, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .nav { background: var(--nav-bg); color: var(--nav-ink); display: flex; flex-direction: column; padding: 1.4rem 0; }
+  .brand { display: flex; align-items: center; gap: 0.6rem; padding: 0 1.35rem 1.5rem; }
+  .brand .mark { width: 30px; height: 30px; border-radius: 8px; background: var(--solar); position: relative; flex: none; }
+  .brand .mark::after { content: ""; position: absolute; inset: 8px; border-radius: 3px; background: var(--nav-bg); clip-path: polygon(0 100%, 55% 0, 55% 55%, 100% 55%, 100% 100%); }
+  .brand .name { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand .name small { display: block; font-family: var(--font-display); font-weight: 600; font-size: 0.5rem; letter-spacing: 0.24em; color: var(--nav-muted); margin-top: 2px; }
+
+  .nav-label { font-family: var(--font-display); font-weight: 600; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nav-muted); padding: 0 1.35rem; margin: 1.3rem 0 0.5rem; }
+  .nav a { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 1.35rem; color: var(--nav-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-left: 2.5px solid transparent; }
+  .nav a .ico { width: 16px; height: 16px; flex: none; opacity: 0.85; }
+  .nav a:hover { color: var(--nav-ink); }
+  .nav a.active { color: var(--nav-ink); background: var(--nav-surface); border-left-color: var(--solar); }
+  .nav a .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.7rem; background: var(--danger); color: #fff; border-radius: 999px; padding: 0.05rem 0.4rem; }
+  .nav .spacer { flex: 1; }
+  .nav .user { display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1.35rem 0; margin-top: 1rem; border-top: 1px solid var(--nav-line); }
+  .avatar { width: 30px; height: 30px; border-radius: 999px; background: var(--solar-wash); color: var(--solar-ink); font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; display: grid; place-items: center; flex: none; }
+  .user .who { line-height: 1.2; }
+  .user .who b { font-weight: 600; font-size: 0.82rem; }
+  .user .who span { display: block; font-size: 0.68rem; color: var(--nav-muted); }
+
+  /* ── MAIN ── */
+  .main { min-width: 0; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding: 1.5rem 2rem 1.3rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--solar-ink); }
+  .topbar h1 { font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; line-height: 1.02; letter-spacing: -0.005em; margin-top: 2px; }
+  .topbar .tools { display: flex; align-items: center; gap: 0.7rem; }
+  .tc { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 0.4rem 0.6rem; background: var(--surface); }
+  .tc b { color: var(--ink); font-weight: 500; }
+  .search { font-size: 0.82rem; color: var(--faint); border: 1px solid var(--line); border-radius: 8px; padding: 0.5rem 0.8rem; background: var(--surface); min-width: 180px; }
+  .btn { font-family: var(--font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.01em; border: none; border-radius: 8px; padding: 0.55rem 0.95rem; background: var(--solar); color: var(--on-solar); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  .content { padding: 1.6rem 2rem 2.5rem; display: flex; flex-direction: column; gap: 1.6rem; }
+
+  /* KPIs */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.05rem 1.15rem 1.15rem; position: relative; overflow: hidden; }
+  .kpi .lbl { font-family: var(--font-display); font-weight: 600; font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .kpi .val { font-family: var(--font-display); font-weight: 700; font-size: 2.9rem; line-height: 1; letter-spacing: -0.01em; margin-top: 0.45rem; }
+  .kpi .val .u { font-size: 1.05rem; color: var(--muted); font-weight: 600; margin-left: 2px; }
+  .kpi .delta { font-family: var(--font-mono); font-size: 0.75rem; margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+  .up { color: var(--success-ink); } .down { color: var(--danger-ink); }
+  .kpi.alert { border-color: color-mix(in oklch, var(--danger) 35%, var(--line)); background: color-mix(in oklch, var(--danger-wash) 55%, var(--surface)); }
+  .kpi.alert .val { color: var(--danger-ink); }
+  .kpi .spark { position: absolute; right: 0.9rem; top: 1rem; width: 54px; height: 20px; }
+
+  /* Section head */
+  .shead { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.9rem; }
+  .shead h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; line-height: 1; }
+  .shead .meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--faint); }
+  .shead .link { margin-left: auto; font-size: 0.8rem; font-weight: 600; color: var(--storage-ink); text-decoration: none; }
+
+  /* Kanban */
+  .kanban { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.75rem; }
+  .col { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem 0.6rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; }
+  .col > .chead { display: flex; align-items: center; gap: 0.4rem; padding: 0 0.15rem 0.15rem; }
+  .col .dot { width: 8px; height: 8px; border-radius: 999px; flex: none; }
+  .col .cname { font-family: var(--font-display); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .col .cnt { margin-left: auto; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); }
+  .col .csum { font-family: var(--font-mono); font-size: 0.7rem; color: var(--faint); padding: 0 0.15rem; margin-top: -0.35rem; }
+
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 0.6rem 0.65rem; display: flex; flex-direction: column; gap: 0.4rem; box-shadow: 0 1px 2px oklch(0.5 0.02 60 / 0.05); }
+  .pcard .pt { font-family: var(--font-display); font-weight: 600; font-size: 0.86rem; line-height: 1.08; }
+  .pcard .amt { font-family: var(--font-mono); font-weight: 500; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .pcard .amt .u { font-size: 0.66rem; color: var(--muted); }
+  .prow { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
+  .sol { font-size: 0.6rem; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 999px; white-space: nowrap; }
+  .sol-solar { background: var(--solar-wash); color: var(--solar-ink); }
+  .sol-bess { background: var(--storage-wash); color: var(--storage-ink); }
+  .sol-both { background: color-mix(in oklch, var(--sol-both) 16%, white); color: var(--sol-both); }
+  .stg { font-family: var(--font-mono); font-size: 0.6rem; color: var(--faint); }
+  .mini-av { width: 19px; height: 19px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--muted); font-family: var(--font-display); font-weight: 700; font-size: 0.6rem; display: grid; place-items: center; }
+  .score-s { font-family: var(--font-mono); font-size: 0.66rem; color: var(--muted); }
+
+  /* Bottom split */
+  .split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.6rem; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.2rem 1.2rem; }
+
+  /* Actions list */
+  .act { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+  .act:last-child { border-bottom: none; }
+  .act .when { font-family: var(--font-mono); font-size: 0.72rem; width: 62px; flex: none; text-align: right; color: var(--muted); }
+  .act .when.over { color: var(--danger-ink); font-weight: 500; }
+  .act .bar { width: 3px; align-self: stretch; border-radius: 3px; background: var(--line-strong); flex: none; }
+  .act.over .bar { background: var(--danger); }
+  .act.today .bar { background: var(--solar); }
+  .act .body { min-width: 0; flex: 1; }
+  .act .task { font-weight: 600; font-size: 0.86rem; }
+  .act .proj { font-size: 0.74rem; color: var(--muted); }
+  .act .own { margin-left: auto; }
+
+  /* Solution mix */
+  .mixbar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; margin: 0.3rem 0 0.9rem; }
+  .mixbar > i { display: block; }
+  .legend { display: flex; flex-direction: column; gap: 0.55rem; }
+  .lgrow { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; }
+  .lgrow .sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .lgrow .v { margin-left: auto; font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink); }
+  .lgrow .p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--faint); width: 34px; text-align: right; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="nav">
+    <div class="brand">
+      <div class="mark"></div>
+      <div class="name">Mexillum<small>CRM · SOLAR + BESS</small></div>
+    </div>
+
+    <div class="nav-label">Operación</div>
+    <a class="active" href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>Dashboard</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3h4v10H2zM6 3h4v6H6zM10 3h4v8h-4z"/></svg>Pipeline</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 13V6l6-4 6 4v7M6 13V9h4v4"/></svg>Empresas</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5" r="2.5"/><path d="M3 13.5c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/></svg>Proyectos</a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 4v4l2.5 1.5"/><circle cx="8" cy="8" r="6.5"/></svg>Siguientes acciones<span class="count">3</span></a>
+    <a href="#"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14V2M2 14h12M5 11l3-4 2.5 2L14 4"/></svg>Reportes</a>
+
+    <div class="spacer"></div>
+    <div class="nav-label">Cuenta</div>
+    <div class="user">
+      <div class="avatar">DA</div>
+      <div class="who"><b>Diego A.</b><span>Director comercial</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Vista ejecutiva · Miércoles 13 ago 2026</div>
+        <h1>Pipeline comercial</h1>
+      </div>
+      <div class="tools">
+        <span class="tc">TC <b>18.00</b> MXN/USD</span>
+        <span class="search">Buscar proyecto, empresa…</span>
+        <button class="btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v10M2 7h10"/></svg>Nuevo proyecto</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- KPIs -->
+      <div class="kpis">
+        <div class="kpi">
+          <div class="lbl">Pipeline total</div>
+          <div class="val">$48.2<span class="u">M MXN</span></div>
+          <div class="delta up">▲ +18% <span style="color:var(--faint)">vs. jul</span></div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Proyectos activos</div>
+          <div class="val">37</div>
+          <div class="delta up">▲ +4 <span style="color:var(--faint)">nuevos</span></div>
+        </div>
+        <div class="kpi alert">
+          <div class="lbl">Sin siguiente acción</div>
+          <div class="val">3</div>
+          <div class="delta down">requieren atención</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Conversión (90d)</div>
+          <div class="val">34<span class="u">%</span></div>
+          <div class="delta up">▲ +6 pts</div>
+        </div>
+      </div>
+
+      <!-- KANBAN -->
+      <section>
+        <div class="shead">
+          <h2>Embudo por etapa</h2>
+          <span class="meta">6 grupos · 13 etapas · 37 proyectos</span>
+          <a class="link" href="#">Ver pipeline completo →</a>
+        </div>
+        <div class="kanban">
+          <!-- Lead -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-lead)"></span><span class="cname">Lead</span><span class="cnt">9</span></div>
+            <div class="csum">$6.1M</div>
+            <div class="pcard">
+              <div class="pt">Cementos del Golfo</div>
+              <div class="amt">$1,850,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-solar">Solar</span><span class="stg">1/13</span></div>
+            </div>
+            <div class="pcard">
+              <div class="pt">Agroindustrias Verde</div>
+              <div class="amt">$720,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-bess">BESS</span><span class="stg">1/13</span></div>
+            </div>
+          </div>
+          <!-- Calificación -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-qual)"></span><span class="cname">Calificación</span><span class="cnt">7</span></div>
+            <div class="csum">$8.9M</div>
+            <div class="pcard">
+              <div class="pt">Minera El Roble</div>
+              <div class="amt">$890,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-solar">Solar</span><span class="score-s">64</span></div>
+              <div class="prow"><span class="stg">2/13 · Discovery</span><span class="mini-av">MP</span></div>
+            </div>
+          </div>
+          <!-- Solución -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-solution)"></span><span class="cname">Solución</span><span class="cnt">6</span></div>
+            <div class="csum">$12.4M</div>
+            <div class="pcard">
+              <div class="pt">Hospital Reg. Bajío</div>
+              <div class="amt">$2,840,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-both">Solar+BESS</span><span class="score-s">88</span></div>
+              <div class="prow"><span class="stg">5/13 · Ingeniería</span><span class="mini-av">AR</span></div>
+            </div>
+          </div>
+          <!-- Comercial -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-commercial)"></span><span class="cname">Comercial</span><span class="cnt">8</span></div>
+            <div class="csum">$14.7M</div>
+            <div class="pcard">
+              <div class="pt">Grupo Alcázar — Saltillo</div>
+              <div class="amt">$3,240,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-both">Solar+BESS</span><span class="score-s">82</span></div>
+              <div class="prow"><span class="stg">4/13 · Propuesta</span><span class="mini-av">AR</span></div>
+            </div>
+            <div class="pcard">
+              <div class="pt">Textiles del Norte</div>
+              <div class="amt">$12,750,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-solar">Solar</span><span class="score-s">91</span></div>
+              <div class="prow"><span class="stg">7/13 · Negociación</span><span class="mini-av">MP</span></div>
+            </div>
+          </div>
+          <!-- Entrega -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-delivery)"></span><span class="cname">Entrega</span><span class="cnt">4</span></div>
+            <div class="csum">$3.8M</div>
+            <div class="pcard">
+              <div class="pt">Parque Log. Querétaro</div>
+              <div class="amt">$1,420,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-bess">BESS</span><span class="stg">10/13</span></div>
+            </div>
+          </div>
+          <!-- Activo -->
+          <div class="col">
+            <div class="chead"><span class="dot" style="background:var(--group-active)"></span><span class="cname">Activo</span><span class="cnt">3</span></div>
+            <div class="csum">$1.9M</div>
+            <div class="pcard">
+              <div class="pt">Universidad TecNorte</div>
+              <div class="amt">$980,000 <span class="u">MXN</span></div>
+              <div class="prow"><span class="sol sol-solar">Solar</span><span class="stg">13/13</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPLIT: Acciones + Mezcla -->
+      <div class="split">
+        <div class="panel">
+          <div class="shead">
+            <h2>Siguientes acciones</h2>
+            <span class="meta">derivadas · no denormalizadas</span>
+            <a class="link" href="#">Mis acciones →</a>
+          </div>
+          <div class="act over">
+            <span class="when over">Ayer</span>
+            <span class="bar"></span>
+            <div class="body"><div class="task">Enviar propuesta técnica revisada</div><div class="proj">Grupo Alcázar — Saltillo · Propuesta</div></div>
+            <span class="mini-av own">AR</span>
+          </div>
+          <div class="act today">
+            <span class="when">Hoy</span>
+            <span class="bar"></span>
+            <div class="body"><div class="task">Llamada de cierre</div><div class="proj">Textiles del Norte · Negociación</div></div>
+            <span class="mini-av own">MP</span>
+          </div>
+          <div class="act">
+            <span class="when">14 ago</span>
+            <span class="bar"></span>
+            <div class="body"><div class="task">Recibir datos de facturación (CFE)</div><div class="proj">Hospital Reg. Bajío · Ingeniería</div></div>
+            <span class="mini-av own">AR</span>
+          </div>
+          <div class="act">
+            <span class="when">16 ago</span>
+            <span class="bar"></span>
+            <div class="body"><div class="task">Agendar discovery técnico</div><div class="proj">Minera El Roble · Calificación</div></div>
+            <span class="mini-av own">MP</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="shead"><h2>Mezcla de solución</h2><span class="meta">por valor</span></div>
+          <div class="mixbar">
+            <i style="width:46%;background:var(--solar)"></i>
+            <i style="width:31%;background:var(--sol-both)"></i>
+            <i style="width:23%;background:var(--storage)"></i>
+          </div>
+          <div class="legend">
+            <div class="lgrow"><span class="sw" style="background:var(--solar)"></span>Solar<span class="v">$22.2M</span><span class="p">46%</span></div>
+            <div class="lgrow"><span class="sw" style="background:var(--sol-both)"></span>Solar + BESS<span class="v">$14.9M</span><span class="p">31%</span></div>
+            <div class="lgrow"><span class="sw" style="background:var(--storage)"></span>Almacenamiento (BESS)<span class="v">$11.1M</span><span class="p">23%</span></div>
+          </div>
+          <div style="height:1px;background:var(--line);margin:1.05rem 0"></div>
+          <div class="shead" style="margin-bottom:0.6rem"><h2 style="font-size:1.1rem">Salud del pipeline</h2></div>
+          <div class="legend">
+            <div class="lgrow"><span class="sw" style="background:var(--success)"></span>Con momentum<span class="v">28</span><span class="p">76%</span></div>
+            <div class="lgrow"><span class="sw" style="background:var(--solar)"></span>Sin actividad 7d+<span class="v">6</span><span class="p">16%</span></div>
+            <div class="lgrow"><span class="sw" style="background:var(--danger)"></span>Bloqueados / en riesgo<span class="v">3</span><span class="p">8%</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
