@@ -10,8 +10,8 @@ describe("authRedirectTarget", () => {
     expect(authRedirectTarget("/login", false)).toBeNull();
   });
 
-  it("sends an authenticated user away from /login to /companies", () => {
-    expect(authRedirectTarget("/login", true)).toBe("/companies");
+  it("sends an authenticated user away from /login to /my-actions", () => {
+    expect(authRedirectTarget("/login", true)).toBe("/my-actions");
   });
 
   it("lets an authenticated user stay on a protected route", () => {

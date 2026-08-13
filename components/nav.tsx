@@ -10,7 +10,7 @@ const links = [
 ];
 
 export function Nav() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   if (pathname === "/login") return null;
   return (
     <nav className="border-b">
