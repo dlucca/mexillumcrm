@@ -3,7 +3,7 @@ import { STAGES, STAGE_GROUPS, SOLUTION_TYPES, STATUSES } from "@/lib/project-pi
 import type { PipelineFilters } from "@/lib/pipeline-filters";
 import type { Option } from "@/lib/project-pipeline";
 
-const fieldClass = "rounded-md border border-line bg-surface px-2 py-1 text-sm text-ink";
+const fieldClass = "rounded-md border border-line-strong bg-surface px-2 py-1 text-sm text-ink";
 const labelClass = "flex flex-col gap-1 text-xs text-muted";
 
 function EnumSelect({
