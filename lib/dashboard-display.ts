@@ -1,4 +1,4 @@
-import { STAGES, stageGroupFor } from "@/lib/project-pipeline";
+import { STAGES, STAGE_GROUPS, stageGroupFor } from "@/lib/project-pipeline";
 
 // Punto del grupo en el kanban — temperatura del deal (ver docs/color-spec).
 export const GROUP_DOT: Record<string, string> = {
@@ -68,4 +68,28 @@ export function groupStageRange(group: string): [number, number] {
   );
   if (idxs.length === 0) return [0, 0];
   return [Math.min(...idxs), Math.max(...idxs)];
+}
+
+// Estado del stepper de 6 grupos para la etapa actual: grupos previos completos,
+// el actual con fill parcial (posición de la etapa dentro de su rango), siguientes vacíos.
+export type StepperSegment = {
+  group: string;
+  label: string;
+  range: [number, number];
+  state: "done" | "current" | "upcoming";
+  fill: number; // 0..100
+};
+
+export function pipelineStepper(stage: string): StepperSegment[] {
+  const currentGroup = stageGroupFor(stage);
+  const currentGroupIdx = STAGE_GROUPS.findIndex((g) => g.value === currentGroup);
+  const idx = stageIndex(stage);
+  return STAGE_GROUPS.map((g, i) => {
+    const range = groupStageRange(g.value);
+    if (i < currentGroupIdx) return { group: g.value, label: g.label, range, state: "done", fill: 100 };
+    if (i > currentGroupIdx) return { group: g.value, label: g.label, range, state: "upcoming", fill: 0 };
+    const [min, max] = range;
+    const fill = ((idx - min + 1) / (max - min + 1)) * 100;
+    return { group: g.value, label: g.label, range, state: "current", fill };
+  });
 }

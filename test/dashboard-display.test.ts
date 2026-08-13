@@ -5,6 +5,7 @@ import {
   potentialBand,
   POT_COLOR,
   groupStageRange,
+  pipelineStepper,
 } from "@/lib/dashboard-display";
 
 describe("stageIndex", () => {
@@ -50,5 +51,45 @@ describe("groupStageRange", () => {
     expect(groupStageRange("commercial")).toEqual([7, 9]);
     expect(groupStageRange("delivery")).toEqual([10, 12]);
     expect(groupStageRange("active")).toEqual([13, 13]);
+  });
+});
+
+describe("pipelineStepper", () => {
+  it("6 grupos en orden con label", () => {
+    const segs = pipelineStepper("diagnostico_web");
+    expect(segs.map((s) => s.group)).toEqual([
+      "lead",
+      "qualification",
+      "solution",
+      "commercial",
+      "delivery",
+      "active",
+    ]);
+    expect(segs[0].label).toBe("Lead");
+  });
+  it("grupos previos done (100), actual con fill parcial, siguientes upcoming (0)", () => {
+    const segs = pipelineStepper("diagnostico_web"); // etapa 4, grupo solution [4,6]
+    const by = Object.fromEntries(segs.map((s) => [s.group, s]));
+    expect(by.lead.state).toBe("done");
+    expect(by.lead.fill).toBe(100);
+    expect(by.qualification.state).toBe("done");
+    expect(by.solution.state).toBe("current");
+    expect(by.solution.fill).toBeCloseTo(33.333, 2); // (4-4+1)/3
+    expect(by.commercial.state).toBe("upcoming");
+    expect(by.commercial.fill).toBe(0);
+    expect(by.active.state).toBe("upcoming");
+  });
+  it("última etapa del grupo actual → fill 100", () => {
+    const segs = pipelineStepper("propuesta_preparacion"); // etapa 6, fin de solution
+    const sol = segs.find((s) => s.group === "solution")!;
+    expect(sol.state).toBe("current");
+    expect(sol.fill).toBe(100);
+  });
+  it("cliente_activo → todos done salvo active current al 100", () => {
+    const segs = pipelineStepper("cliente_activo");
+    const by = Object.fromEntries(segs.map((s) => [s.group, s]));
+    expect(by.commercial.state).toBe("done");
+    expect(by.active.state).toBe("current");
+    expect(by.active.fill).toBe(100);
   });
 });
