@@ -6,6 +6,26 @@ import { eq } from "drizzle-orm";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
+export type CreateCompanyResult =
+  | { ok: true; company: { id: string; name: string } }
+  | { ok: false; error: string };
+
+export async function runCreateCompanyReturning(
+  db: AnyDb,
+  formData: FormData
+): Promise<CreateCompanyResult> {
+  const parsed = companyCreateSchema.safeParse({ name: formData.get("name") });
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  try {
+    const row = await createCompany(db, parsed.data);
+    return { ok: true, company: { id: row.id, name: row.name } };
+  } catch {
+    return { ok: false, error: "No se pudo crear la empresa" };
+  }
+}
+
 export async function runCreateCompany(
   db: AnyDb,
   formData: FormData

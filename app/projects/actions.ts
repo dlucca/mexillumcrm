@@ -9,9 +9,17 @@ import { archiveProject, restoreProject } from "@/db/projects";
 import { runCreateProject, runUpdateProject, runMoveProjectStage, runDeleteProject } from "@/lib/project-mutations";
 import { runCreateNote } from "@/lib/activity-mutations";
 import { runCreateTask, runCompleteTask } from "@/lib/task-mutations";
-import type { ActionResult } from "@/lib/company-mutations";
+import { runCreateCompanyReturning, type ActionResult, type CreateCompanyResult } from "@/lib/company-mutations";
 
 const idSchema = z.string().uuid();
+
+export async function createCompanyByNameAction(name: string): Promise<CreateCompanyResult> {
+  const formData = new FormData();
+  formData.set("name", name);
+  const result = await runCreateCompanyReturning(db, formData);
+  if (result.ok) revalidatePath("/companies");
+  return result;
+}
 
 export async function createProjectAction(
   _prev: ActionResult | null,

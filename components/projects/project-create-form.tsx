@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createProjectAction } from "@/app/projects/actions";
+import { createProjectAction, createCompanyByNameAction } from "@/app/projects/actions";
 import type { ActionResult } from "@/lib/company-mutations";
 import { STAGES, STATUSES, labelOf, stageGroupFor, formatMXN } from "@/lib/project-pipeline";
 import { formatUSD, MXN_PER_USD } from "@/lib/currency";
@@ -57,7 +57,7 @@ function Check({ ok, children }: { ok: boolean; children: React.ReactNode }) {
 }
 
 export function ProjectCreateForm({
-  companies,
+  companies: initialCompanies,
   preselectedCompanyId,
 }: {
   companies: CompanyOption[];
@@ -69,7 +69,35 @@ export function ProjectCreateForm({
     null
   );
 
+  const [companies, setCompanies] = useState<CompanyOption[]>(initialCompanies);
   const [companyId, setCompanyId] = useState(preselectedCompanyId ?? "");
+
+  // Crear empresa inline (solo nombre)
+  const newCompanyRef = useRef<HTMLDetailsElement>(null);
+  const [newCompanyName, setNewCompanyName] = useState("");
+  const [creatingCompany, setCreatingCompany] = useState(false);
+  const [newCompanyError, setNewCompanyError] = useState<string | null>(null);
+
+  async function handleCreateCompany() {
+    const name = newCompanyName.trim();
+    if (name === "") {
+      setNewCompanyError("El nombre es obligatorio");
+      return;
+    }
+    setCreatingCompany(true);
+    setNewCompanyError(null);
+    const res = await createCompanyByNameAction(name);
+    setCreatingCompany(false);
+    if (res.ok) {
+      setCompanies((prev) => [res.company, ...prev]);
+      setCompanyId(res.company.id);
+      setNewCompanyName("");
+      if (newCompanyRef.current) newCompanyRef.current.open = false;
+    } else {
+      setNewCompanyError(res.error);
+    }
+  }
+
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [stateName, setStateName] = useState("");
@@ -134,7 +162,45 @@ export function ProjectCreateForm({
         {/* FORM */}
         <div className="flex min-w-0 flex-col gap-5">
           <Section n={1} title="Empresa">
-            <label className={labelCls}>Empresa propietaria {req}</label>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <label className={labelCls + " mb-0"}>Empresa propietaria {req}</label>
+              <details ref={newCompanyRef} className="relative">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-[0.74rem] font-semibold text-solar-ink hover:underline marker:hidden">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M7 2v10M2 7h10" />
+                  </svg>
+                  Nueva empresa
+                </summary>
+                <div className="absolute right-0 z-20 mt-2 w-72 rounded-xl border border-line bg-surface p-3 shadow-[0_8px_28px_oklch(0.3_0.02_60/0.14)]">
+                  <div className="flex flex-col gap-2">
+                    <label className="col-label text-[0.68rem] text-muted">Nombre de la empresa</label>
+                    <input
+                      value={newCompanyName}
+                      onChange={(e) => setNewCompanyName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          void handleCreateCompany();
+                        }
+                      }}
+                      placeholder="Grupo Alcázar"
+                      className="rounded-lg border border-line-strong bg-surface px-3 py-2.5 text-sm outline-none focus:border-solar focus:ring-2 focus:ring-solar/25"
+                    />
+                    {newCompanyError ? (
+                      <p className="text-[0.78rem] text-danger-ink">{newCompanyError}</p>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => void handleCreateCompany()}
+                      disabled={creatingCompany}
+                      className="mt-0.5 rounded-lg bg-solar px-3 py-2 text-[0.82rem] font-semibold text-on-solar transition-colors hover:bg-solar-strong disabled:opacity-50"
+                    >
+                      {creatingCompany ? "Creando…" : "Crear empresa"}
+                    </button>
+                  </div>
+                </div>
+              </details>
+            </div>
             <select
               name="companyId"
               required
@@ -150,10 +216,7 @@ export function ProjectCreateForm({
               ))}
             </select>
             <p className="mt-2 text-[0.72rem] text-faint">
-              Un proyecto pertenece a una empresa. ¿Empresa nueva?{" "}
-              <Link href="/companies" className="font-semibold text-solar-ink hover:underline">
-                Crear empresa
-              </Link>
+              Un proyecto pertenece a una empresa. Crea una nueva con “Nueva empresa” sin salir de aquí.
             </p>
           </Section>
 
