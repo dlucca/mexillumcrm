@@ -153,6 +153,14 @@
   --pot-alto:      oklch(0.69  0.150 58);
   --pot-muyalto:   oklch(0.64  0.175 46);
 
+  /* Rampa de pipeline (6 grupos) Sol→Almacenamiento — usada por los charts del dashboard */
+  --pipe-1: var(--solar);
+  --pipe-2: color-mix(in oklch, var(--solar), var(--storage) 20%);
+  --pipe-3: color-mix(in oklch, var(--solar), var(--storage) 40%);
+  --pipe-4: color-mix(in oklch, var(--solar), var(--storage) 60%);
+  --pipe-5: color-mix(in oklch, var(--solar), var(--storage) 80%);
+  --pipe-6: var(--storage);
+
   --radius: 0.625rem;
 
   /* shadcn/ui extra — sin equivalente en el kit; grises neutros de reserva
