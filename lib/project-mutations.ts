@@ -59,9 +59,13 @@ export async function runCreateProject(
   const parsed = projectCreateSchema.safeParse({
     companyId: formData.get("companyId"),
     name: formData.get("name"),
+    city: formData.get("city"),
+    state: formData.get("state"),
     stage: formData.get("stage"),
+    status: formData.get("status"),
     solutionType: formData.get("solutionType"),
     estimatedValue: formData.get("estimatedValue"),
+    probability: formData.get("probability"),
     notes: formData.get("notes"),
   });
   if (!parsed.success) {
@@ -71,11 +75,14 @@ export async function runCreateProject(
     companyId: parsed.data.companyId,
     name: parsed.data.name,
     ownerUserId,
+    city: parsed.data.city,
+    state: parsed.data.state,
     stage: parsed.data.stage,
     stageGroup: stageGroupFor(parsed.data.stage),
-    status: "open",
+    status: parsed.data.status,
     solutionType: parsed.data.solutionType,
     estimatedValue: parsed.data.estimatedValue,
+    probability: parsed.data.probability,
     notes: parsed.data.notes,
   };
   try {

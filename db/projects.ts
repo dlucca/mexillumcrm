@@ -7,11 +7,14 @@ export type NewProjectInput = {
   companyId: string;
   name: string;
   ownerUserId: string | null;
+  city?: string | null;
+  state?: string | null;
   stage: string;
   stageGroup: string;
   status: string;
   solutionType: string;
   estimatedValue: number | null;
+  probability?: number | null;
   notes: string | null;
 };
 

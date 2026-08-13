@@ -54,6 +54,55 @@ describe("runCreateProject", () => {
     expect(result).toEqual({ ok: false, error: "Empresa inválida" });
   });
 
+  it("persiste city, state, probability y status", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    const result = await runCreateProject(
+      db,
+      formOf({
+        companyId: company.id,
+        name: "Ramos Arizpe — Nave 2",
+        city: "Ramos Arizpe",
+        state: "Coahuila",
+        solutionType: "solar_bess",
+        estimatedValue: "3100000",
+        probability: "70",
+        status: "paused",
+      }),
+      null
+    );
+    expect(result).toEqual({ ok: true });
+    const [row] = await listProjects(db, company.id);
+    expect(row.city).toBe("Ramos Arizpe");
+    expect(row.state).toBe("Coahuila");
+    expect(row.solutionType).toBe("solar_bess");
+    expect(row.estimatedValue).toBe(3100000);
+    expect(row.probability).toBe(70);
+    expect(row.status).toBe("paused");
+  });
+
+  it("status default open y probability/city null cuando se omiten", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    await runCreateProject(db, formOf({ companyId: company.id, name: "P" }), null);
+    const [row] = await listProjects(db, company.id);
+    expect(row.status).toBe("open");
+    expect(row.probability).toBeNull();
+    expect(row.city).toBeNull();
+    expect(row.state).toBeNull();
+  });
+
+  it("rechaza probability fuera de rango", async () => {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    const result = await runCreateProject(
+      db,
+      formOf({ companyId: company.id, name: "P", probability: "150" }),
+      null
+    );
+    expect(result.ok).toBe(false);
+  });
+
   it("registra una Activity 'system' al crear el proyecto", async () => {
     const db = await createTestDb();
     const company = await createCompany(db, { name: "Acme" });

@@ -95,9 +95,13 @@ export const projectCreateSchema = z.object({
     (v) => (typeof v === "string" ? v.trim() : ""),
     z.string().min(1, "El nombre es obligatorio")
   ),
+  city: optionalText,
+  state: optionalText,
   stage: requiredEnum(STAGE_VALUES, "Etapa inválida", "lead_sin_contactar"),
+  status: requiredEnum(STATUS_VALUES, "Status inválido", "open"),
   solutionType: requiredEnum(SOLUTION_TYPE_VALUES, "Solución inválida", "unknown"),
   estimatedValue: optionalInt(),
+  probability: optionalInt({ max: 100 }),
   notes: optionalText,
 });
 

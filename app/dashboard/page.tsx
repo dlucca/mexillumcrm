@@ -85,7 +85,7 @@ export default async function DashboardPage() {
             TC <b className="font-medium text-ink">{MXN_PER_USD.toFixed(2)}</b> MXN/USD
           </span>
           <Link
-            href="/projects"
+            href="/projects/new"
             className="inline-flex items-center gap-1.5 rounded-lg bg-solar px-3.5 py-2.5 text-sm font-semibold text-on-solar transition-colors hover:bg-solar-strong"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">

@@ -61,7 +61,7 @@ export default async function PipelinePage({
           <Total k="Proyectos" v={String(filtered.length)} />
           <Total k="Ponderado" v={formatUSDCompact(weighted)} title={formatUSD(weighted)} />
           <Link
-            href="/projects"
+            href="/projects/new"
             className="inline-flex items-center gap-1.5 rounded-lg bg-solar px-3.5 py-2.5 text-sm font-semibold text-on-solar transition-colors hover:bg-solar-strong"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
