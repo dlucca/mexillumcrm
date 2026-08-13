@@ -75,7 +75,7 @@ export default async function DashboardPage() {
           <section>
             <h2 className="font-display font-bold text-xl tracking-display">Pipeline por grupo</h2>
             <div className="mt-3">
-              <PipelineGroupChart columns={groups} />
+              <PipelineGroupChart columns={groups.map((g) => ({ group: g.group, label: g.label, count: g.count, totalValue: g.totalValue }))} />
             </div>
           </section>
           <section>
