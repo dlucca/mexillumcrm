@@ -3,7 +3,7 @@ import {
   type NewProjectInput,
   type ProjectUpdateFields,
 } from "@/db/projects";
-import { projects, activities } from "@/db/schema";
+import { projects, activities, tasks } from "@/db/schema";
 import { projectCreateSchema, projectUpdateSchema, stageMoveSchema } from "@/lib/validation";
 import { stageGroupFor, autoStatusForStage } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
@@ -211,5 +211,24 @@ export async function runMoveProjectStage(
     });
   } catch {
     return { ok: false, error: "No se pudo mover la etapa" };
+  }
+}
+
+export async function runDeleteProject(db: AnyDb, id: string): Promise<ActionResult> {
+  try {
+    return await db.transaction(async (tx): Promise<ActionResult> => {
+      const [existing] = await tx
+        .select({ id: projects.id })
+        .from(projects)
+        .where(eq(projects.id, id))
+        .limit(1);
+      if (!existing) return { ok: false, error: "No se encontró el proyecto" };
+      await tx.delete(tasks).where(eq(tasks.projectId, id));
+      await tx.delete(activities).where(eq(activities.projectId, id));
+      await tx.delete(projects).where(eq(projects.id, id));
+      return { ok: true };
+    });
+  } catch {
+    return { ok: false, error: "No se pudo eliminar el proyecto" };
   }
 }

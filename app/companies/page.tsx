@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { db } from "@/db/client";
-import { listCompanies } from "@/db/companies";
+import { listCompaniesWithProjectCount } from "@/db/companies";
 import { CompanyTable } from "@/components/company-table";
 import { NewCompanyForm } from "@/components/new-company-form";
 import { signOut } from "@/app/login/actions";
@@ -16,7 +16,7 @@ export default async function CompaniesPage({
 }) {
   const { archived } = await searchParams;
   const showArchived = archived === "1";
-  const companies = await listCompanies(db, { archived: showArchived });
+  const companies = await listCompaniesWithProjectCount(db, { archived: showArchived });
 
   return (
     <main className="mx-auto max-w-4xl p-8">

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { db } from "@/db/client";
-import { listAllProjects } from "@/db/projects";
+import { listAllProjectsWithCounts } from "@/db/projects";
 import { ProjectTable } from "@/components/project-table";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export default async function ProjectsPage({
 }) {
   const { archived } = await searchParams;
   const showArchived = archived === "1";
-  const projects = await listAllProjects(db, { archived: showArchived });
+  const projects = await listAllProjectsWithCounts(db, { archived: showArchived });
 
   return (
     <main className="mx-auto max-w-4xl p-8">
@@ -35,7 +35,7 @@ export default async function ProjectsPage({
         </Link>
       </div>
 
-      <ProjectTable data={projects} archived={showArchived} showCompany />
+      <ProjectTable data={projects} archived={showArchived} showCompany showActions />
     </main>
   );
 }

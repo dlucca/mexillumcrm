@@ -1,5 +1,5 @@
-import { and, desc, eq, isNull, isNotNull } from "drizzle-orm";
-import { projects, companies } from "./schema";
+import { and, desc, eq, isNull, isNotNull, sql } from "drizzle-orm";
+import { projects, companies, activities, tasks } from "./schema";
 import type { Project } from "./schema";
 import type { AnyDb } from "@/db/types";
 
@@ -103,4 +103,32 @@ export async function restoreProject(db: AnyDb, id: string): Promise<Project | u
     .where(eq(projects.id, id))
     .returning();
   return row;
+}
+
+export type ProjectCountRow = ProjectListRow & { activityCount: number; taskCount: number };
+
+export async function listAllProjectsWithCounts(
+  db: AnyDb,
+  opts: { archived?: boolean } = {}
+): Promise<ProjectCountRow[]> {
+  const rows = await db
+    .select({
+      project: projects,
+      companyName: companies.name,
+      activityCount: sql<number>`count(distinct ${activities.id})`.mapWith(Number),
+      taskCount: sql<number>`count(distinct ${tasks.id})`.mapWith(Number),
+    })
+    .from(projects)
+    .innerJoin(companies, eq(projects.companyId, companies.id))
+    .leftJoin(activities, eq(activities.projectId, projects.id))
+    .leftJoin(tasks, eq(tasks.projectId, projects.id))
+    .where(opts.archived ? isNotNull(projects.archivedAt) : isNull(projects.archivedAt))
+    .groupBy(projects.id, companies.name)
+    .orderBy(desc(projects.createdAt));
+  return rows.map((r) => ({
+    ...r.project,
+    companyName: r.companyName,
+    activityCount: r.activityCount,
+    taskCount: r.taskCount,
+  }));
 }

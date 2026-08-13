@@ -1,5 +1,5 @@
-import { desc, eq, isNull, isNotNull } from "drizzle-orm";
-import { companies } from "./schema";
+import { desc, eq, isNull, isNotNull, sql } from "drizzle-orm";
+import { companies, projects } from "./schema";
 import type { Company } from "./schema";
 import type { AnyDb } from "@/db/types";
 
@@ -81,4 +81,23 @@ export async function restoreCompany(
     .where(eq(companies.id, id))
     .returning();
   return row;
+}
+
+export type CompanyListRow = Company & { projectCount: number };
+
+export async function listCompaniesWithProjectCount(
+  db: AnyDb,
+  opts: { archived?: boolean } = {}
+): Promise<CompanyListRow[]> {
+  const rows = await db
+    .select({
+      company: companies,
+      projectCount: sql<number>`count(distinct ${projects.id})`.mapWith(Number),
+    })
+    .from(companies)
+    .leftJoin(projects, eq(projects.companyId, companies.id))
+    .where(opts.archived ? isNotNull(companies.archivedAt) : isNull(companies.archivedAt))
+    .groupBy(companies.id)
+    .orderBy(desc(companies.createdAt));
+  return rows.map((r) => ({ ...r.company, projectCount: r.projectCount }));
 }
