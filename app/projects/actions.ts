@@ -6,7 +6,7 @@ import { z } from "zod";
 import { db } from "@/db/client";
 import { createClient } from "@/lib/supabase/server";
 import { archiveProject, restoreProject } from "@/db/projects";
-import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
+import { runCreateProject, runUpdateProject, runMoveProjectStage } from "@/lib/project-mutations";
 import { runCreateNote } from "@/lib/activity-mutations";
 import { runCreateTask, runCompleteTask } from "@/lib/task-mutations";
 import type { ActionResult } from "@/lib/company-mutations";
@@ -101,6 +101,17 @@ export async function completeTaskAction(formData: FormData): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   await runCompleteTask(db, formData, user?.id ?? null);
+  const projectId = idSchema.safeParse(formData.get("projectId"));
+  if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
+}
+
+export async function moveStageAction(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  await runMoveProjectStage(db, formData, user?.id ?? null);
+  revalidatePath("/pipeline");
   const projectId = idSchema.safeParse(formData.get("projectId"));
   if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
 }
