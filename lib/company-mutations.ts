@@ -1,6 +1,8 @@
 import type { AnyDb } from "@/db/types";
 import { createCompany, updateCompany } from "@/db/companies";
 import { companyCreateSchema, companyUpdateSchema } from "@/lib/validation";
+import { companies, contacts, projects, activities, tasks } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -51,4 +53,25 @@ export async function runUpdateCompany(
     return { ok: false, error: "No se pudo actualizar la empresa" };
   }
   return { ok: true };
+}
+
+export async function runDeleteCompany(db: AnyDb, id: string): Promise<ActionResult> {
+  try {
+    return await db.transaction(async (tx): Promise<ActionResult> => {
+      const [existing] = await tx
+        .select({ id: companies.id })
+        .from(companies)
+        .where(eq(companies.id, id))
+        .limit(1);
+      if (!existing) return { ok: false, error: "No se encontró la empresa" };
+      await tx.delete(tasks).where(eq(tasks.companyId, id));
+      await tx.delete(activities).where(eq(activities.companyId, id));
+      await tx.delete(contacts).where(eq(contacts.companyId, id));
+      await tx.delete(projects).where(eq(projects.companyId, id));
+      await tx.delete(companies).where(eq(companies.id, id));
+      return { ok: true };
+    });
+  } catch {
+    return { ok: false, error: "No se pudo eliminar la empresa" };
+  }
 }
