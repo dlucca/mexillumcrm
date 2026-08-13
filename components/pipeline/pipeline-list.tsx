@@ -3,19 +3,12 @@ import type { ProjectListRow } from "@/db/projects";
 import type { OpenTaskRow } from "@/db/tasks";
 import { labelOf, STATUSES } from "@/lib/project-pipeline";
 import { formatUSD, formatMXNCompact } from "@/lib/currency";
-import { SOLUTION_BADGE, stageIndex, STAGE_COUNT, GROUP_DOT } from "@/lib/dashboard-display";
+import { SOLUTION_BADGE, STATUS_BADGE, stageIndex, STAGE_COUNT, GROUP_DOT } from "@/lib/dashboard-display";
 
 const dueFmt = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short" });
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    open: "badge-solar",
-    won: "badge-success",
-    active_customer: "badge-success",
-    lost: "badge-danger",
-    paused: "badge-neutral",
-  };
-  return <span className={`badge ${map[status] ?? "badge-neutral"}`}>{labelOf(STATUSES, status)}</span>;
+  return <span className={`badge ${STATUS_BADGE[status] ?? "badge-neutral"}`}>{labelOf(STATUSES, status)}</span>;
 }
 
 export function PipelineList({

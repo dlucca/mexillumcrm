@@ -18,6 +18,15 @@ export const SOLUTION_BADGE: Record<string, { label: string; className: string }
   unknown: { label: "Sin definir", className: "badge-neutral" },
 };
 
+// Badge de status: clase de globals.css. `open` neutro (estado por defecto).
+export const STATUS_BADGE: Record<string, string> = {
+  open: "badge-neutral",
+  won: "badge-success",
+  active_customer: "badge-success",
+  lost: "badge-danger",
+  paused: "badge-neutral",
+};
+
 // Color sólido por solución para barras/leyendas (mezcla de solución).
 export const SOLUTION_COLOR: Record<string, string> = {
   solar: "var(--solar)",
