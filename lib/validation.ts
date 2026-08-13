@@ -158,3 +158,10 @@ export const taskCreateSchema = z.object({
 });
 
 export type TaskCreateInput = z.infer<typeof taskCreateSchema>;
+
+export const stageMoveSchema = z.object({
+  projectId: z.string().uuid("Proyecto inválido"),
+  stage: requiredEnum(STAGE_VALUES, "Etapa inválida"),
+});
+
+export type StageMoveInput = z.infer<typeof stageMoveSchema>;
