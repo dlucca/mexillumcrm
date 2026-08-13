@@ -142,10 +142,12 @@ tabla ya usa sus estilos). Copy en español.
 
 ## Testing (TDD — Vitest + PGlite in-process)
 - `runDeleteCompany`: borra la empresa + sus proyectos + activities + tasks + contacts; **scoping**
-  (una segunda empresa con sus datos queda intacta); empresa inexistente → error; **rollback**
-  (spy que hace throw en el último delete → nada se borró).
+  (una segunda empresa con sus datos queda intacta); empresa inexistente → error.
 - `runDeleteProject`: borra el proyecto + sus activities + tasks; NO toca otros proyectos ni los
-  contacts de la empresa; inexistente → error; rollback.
+  contacts de la empresa; inexistente → error.
+- Atomicidad: garantizada por `db.transaction` (patrón ya probado en el repo). No se testea con un
+  seam artificial porque el borrado sólo hace `tx.delete(...)` sin helper puro intermedio que
+  espiar; completitud + scoping cubren que no queden huérfanos.
 - `listCompaniesWithProjectCount`: projectCount correcto (incl. proyectos archivados); empresa sin
   proyectos → 0.
 - `listAllProjectsWithCounts`: activityCount/taskCount correctos; sin hijos → 0; el doble join no
