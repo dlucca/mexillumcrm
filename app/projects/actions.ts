@@ -103,6 +103,8 @@ export async function completeTaskAction(formData: FormData): Promise<void> {
   await runCompleteTask(db, formData, user?.id ?? null);
   const projectId = idSchema.safeParse(formData.get("projectId"));
   if (projectId.success) revalidatePath(`/projects/${projectId.data}`);
+  revalidatePath("/my-actions");
+  revalidatePath("/dashboard");
 }
 
 export async function moveStageAction(formData: FormData): Promise<void> {

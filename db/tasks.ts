@@ -25,15 +25,35 @@ export async function listTasksForProject(db: AnyDb, projectId: string): Promise
   return db.select().from(tasks).where(eq(tasks.projectId, projectId)).orderBy(asc(tasks.dueDate));
 }
 
-export type OpenTaskRow = Task & { projectName: string; companyName: string };
+export type OpenTaskRow = Task & {
+  projectName: string;
+  companyName: string;
+  stage: string;
+  stageGroup: string;
+  solutionType: string;
+};
 
 export async function listOpenTasksWithContext(db: AnyDb): Promise<OpenTaskRow[]> {
   const rows = await db
-    .select({ task: tasks, projectName: projects.name, companyName: companies.name })
+    .select({
+      task: tasks,
+      projectName: projects.name,
+      companyName: companies.name,
+      stage: projects.stage,
+      stageGroup: projects.stageGroup,
+      solutionType: projects.solutionType,
+    })
     .from(tasks)
     .innerJoin(projects, eq(tasks.projectId, projects.id))
     .innerJoin(companies, eq(tasks.companyId, companies.id))
     .where(and(isNull(tasks.completedAt), isNull(projects.archivedAt)))
     .orderBy(asc(tasks.dueDate));
-  return rows.map((r) => ({ ...r.task, projectName: r.projectName, companyName: r.companyName }));
+  return rows.map((r) => ({
+    ...r.task,
+    projectName: r.projectName,
+    companyName: r.companyName,
+    stage: r.stage,
+    stageGroup: r.stageGroup,
+    solutionType: r.solutionType,
+  }));
 }

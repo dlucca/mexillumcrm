@@ -69,7 +69,16 @@ describe("listOpenTasksWithContext", () => {
   it("trae solo abiertas de projects no archivados, con nombres y orden due_date asc", async () => {
     const db = await createTestDb();
     const company = await createCompany(db, { name: "Acme" });
-    const [pA] = await db.insert(projects).values({ companyId: company.id, name: "Planta A" }).returning();
+    const [pA] = await db
+      .insert(projects)
+      .values({
+        companyId: company.id,
+        name: "Planta A",
+        stage: "propuesta_enviada",
+        stageGroup: "commercial",
+        solutionType: "solar",
+      })
+      .returning();
     const [pArch] = await db.insert(projects).values({ companyId: company.id, name: "Planta Vieja" }).returning();
 
     await createTask(db, { projectId: pA.id, companyId: company.id, ownerUserId: null, title: "tarde", dueDate: "2026-12-01" });
@@ -85,5 +94,8 @@ describe("listOpenTasksWithContext", () => {
     expect(rows.map((r) => r.title)).toEqual(["pronto", "tarde"]);
     expect(rows[0].projectName).toBe("Planta A");
     expect(rows[0].companyName).toBe("Acme");
+    expect(rows[0].stage).toBe("propuesta_enviada");
+    expect(rows[0].stageGroup).toBe("commercial");
+    expect(rows[0].solutionType).toBe("solar");
   });
 });
