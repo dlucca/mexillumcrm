@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db/client";
 import { archiveCompany, restoreCompany } from "@/db/companies";
-import { runUpdateCompany, type ActionResult } from "@/lib/company-mutations";
+import { runUpdateCompany, runDeleteCompany, type ActionResult } from "@/lib/company-mutations";
 
 const idSchema = z.string().uuid();
 
@@ -40,4 +40,14 @@ export async function restoreCompanyAction(formData: FormData): Promise<void> {
     revalidatePath("/companies");
   }
   redirect("/companies");
+}
+
+export async function deleteCompanyAction(formData: FormData): Promise<void> {
+  const parsedId = idSchema.safeParse(formData.get("id"));
+  if (parsedId.success) {
+    await runDeleteCompany(db, parsedId.data);
+    revalidatePath("/companies");
+    revalidatePath("/dashboard");
+    revalidatePath("/pipeline");
+  }
 }
