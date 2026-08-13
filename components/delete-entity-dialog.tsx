@@ -35,7 +35,7 @@ export function DeleteEntityDialog({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <form action={action}>
             <input type="hidden" name="id" value={id} />
-            <AlertDialogAction type="submit">Eliminar</AlertDialogAction>
+            <AlertDialogAction type="submit" variant="destructive">Eliminar</AlertDialogAction>
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>
