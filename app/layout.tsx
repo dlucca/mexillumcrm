@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fontVariables } from "./fonts";
+import { Nav } from "@/components/nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning es útil si luego agregas theming claro/oscuro
     <html lang="es" className={fontVariables} suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <Nav />
+        {children}
+      </body>
     </html>
   );
 }
