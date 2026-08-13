@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { listCompanies } from "@/db/companies";
 import { listAllProjects } from "@/db/projects";
 import { lastActivityByCompany } from "@/db/activities";
+import { companyRelationCounts } from "@/db/delete-counts";
 import { summarizeCompanyProjects } from "@/lib/companies";
 import { formatUSDCompact, formatUSD } from "@/lib/currency";
 import { CompaniesTable, type CompanyRow } from "@/components/companies/companies-table";
@@ -43,6 +44,7 @@ export default async function CompaniesPage({
   const companies = await listCompanies(db, { archived });
   const projects = await listAllProjects(db, { archived: false });
   const lastAct = await lastActivityByCompany(db);
+  const relCounts = await companyRelationCounts(db);
 
   const byCompany = new Map<string, typeof projects>();
   for (const p of projects) {
@@ -55,6 +57,7 @@ export default async function CompaniesPage({
     company: c,
     summary: summarizeCompanyProjects(byCompany.get(c.id) ?? []),
     lastActivityAt: lastAct.get(c.id) ?? null,
+    relCounts: relCounts.get(c.id) ?? { contacts: 0, activities: 0, tasks: 0 },
   }));
 
   const totalValue = allRows.reduce((s, r) => s + r.summary.totalValue, 0);

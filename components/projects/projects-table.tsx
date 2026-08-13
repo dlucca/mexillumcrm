@@ -13,17 +13,10 @@ import {
   STAGE_COUNT,
 } from "@/lib/dashboard-display";
 import { DeleteEntityDialog } from "@/components/delete-entity-dialog";
+import { buildImpactRows } from "@/lib/delete-impact";
 import { deleteProjectAction } from "@/app/projects/actions";
 
 const dueFmt = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short" });
-
-function deleteDescription(p: ProjectCountRow): string {
-  const a = p.activityCount ?? 0;
-  const t = p.taskCount ?? 0;
-  const acts = a === 1 ? "1 actividad" : `${a} actividades`;
-  const tks = t === 1 ? "1 tarea" : `${t} tareas`;
-  return `Se eliminará permanentemente «${p.name}» y sus ${acts} y ${tks}. Esta acción no se puede deshacer.`;
-}
 
 const TH = "col-label whitespace-nowrap border-b-[1.5px] border-line-strong px-3 py-2.5 text-[0.66rem] text-muted";
 
@@ -160,8 +153,13 @@ export function ProjectsTable({
                     <DeleteEntityDialog
                       id={p.id}
                       action={deleteProjectAction}
-                      title="Eliminar proyecto"
-                      description={deleteDescription(p)}
+                      name={p.name}
+                      entityLabel="proyecto"
+                      entityArticle="el"
+                      impact={buildImpactRows({
+                        activities: p.activityCount,
+                        tasks: p.taskCount,
+                      })}
                     />
                   </div>
                 </td>

@@ -5,6 +5,8 @@ import { labelOf, STAGE_GROUPS, SOLUTION_TYPES } from "@/lib/project-pipeline";
 import { formatUSD, formatMXNCompact } from "@/lib/currency";
 import { GROUP_DOT, SOLUTION_BADGE } from "@/lib/dashboard-display";
 import { DeleteEntityDialog } from "@/components/delete-entity-dialog";
+import { buildImpactRows } from "@/lib/delete-impact";
+import type { CompanyRelationCounts } from "@/db/delete-counts";
 import { deleteCompanyAction } from "@/app/companies/[id]/actions";
 
 const dateFmt = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short" });
@@ -33,14 +35,14 @@ function statusClass(key: string): string {
   return "";
 }
 
-export type CompanyRow = { company: Company; summary: CompanySummary; lastActivityAt: Date | null };
+export type CompanyRow = {
+  company: Company;
+  summary: CompanySummary;
+  lastActivityAt: Date | null;
+  relCounts: CompanyRelationCounts;
+};
 
 const TH = "col-label whitespace-nowrap border-b-[1.5px] border-line-strong px-3 py-2.5 text-[0.66rem] text-muted";
-
-function deleteDescription(name: string, count: number): string {
-  const proyectos = count === 1 ? "1 proyecto" : `${count} proyectos`;
-  return `Se eliminará permanentemente «${name}» y sus ${proyectos}, con sus contactos, actividades y tareas. Esta acción no se puede deshacer.`;
-}
 
 export function CompaniesTable({ rows, archived }: { rows: CompanyRow[]; archived: boolean }) {
   if (rows.length === 0) {
@@ -66,7 +68,7 @@ export function CompaniesTable({ rows, archived }: { rows: CompanyRow[]; archive
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ company: c, summary: s, lastActivityAt }) => (
+          {rows.map(({ company: c, summary: s, lastActivityAt, relCounts: rc }) => (
             <tr key={c.id} className="group border-b border-line last:border-b-0 hover:bg-surface-2/60">
               {/* Empresa */}
               <td className="px-3 py-2.5">
@@ -138,8 +140,17 @@ export function CompaniesTable({ rows, archived }: { rows: CompanyRow[]; archive
                   <DeleteEntityDialog
                     id={c.id}
                     action={deleteCompanyAction}
-                    title="Eliminar empresa"
-                    description={deleteDescription(c.name, s.count)}
+                    name={c.name}
+                    entityLabel="empresa"
+                    entityArticle="la"
+                    confirmName
+                    impact={buildImpactRows({
+                      projects: s.count,
+                      contacts: rc.contacts,
+                      activities: rc.activities,
+                      tasks: rc.tasks,
+                      pipelineValueMxn: s.totalValue,
+                    })}
                   />
                 </div>
               </td>
