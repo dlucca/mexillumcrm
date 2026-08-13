@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { createTestDb } from "@/test/db";
 import { createCompany } from "@/db/companies";
 import { listProjects, listAllProjects } from "@/db/projects";
-import { runCreateProject, runUpdateProject } from "@/lib/project-mutations";
+import { runCreateProject, runUpdateProject, runMoveProjectStage } from "@/lib/project-mutations";
 import { listActivitiesForProject } from "@/db/activities";
 import * as activityLog from "@/lib/activity-log";
 import type { AnyDb as AnyDbT } from "@/db/types";
@@ -284,5 +284,63 @@ describe("runUpdateProject", () => {
     expect(row.status).toBe("won");
     expect(row.lostReason).toBeNull();
     expect(row.lostReasonNote).toBeNull();
+  });
+});
+
+describe("runMoveProjectStage", () => {
+  async function seed() {
+    const db = await createTestDb();
+    const company = await createCompany(db, { name: "Acme" });
+    await runCreateProject(db, formOf({ companyId: company.id, name: "P" }), null);
+    const [row] = await listProjects(db, company.id);
+    return { db, company, id: row.id }; // arranca en lead_sin_contactar
+  }
+
+  it("cambia stage + stageGroup y registra 1 stage_change", async () => {
+    const { db, id } = await seed();
+    const res = await runMoveProjectStage(db, formOf({ projectId: id, stage: "outreach_enviado" }), "22222222-2222-2222-2222-222222222222");
+    expect(res).toEqual({ ok: true });
+    const [p] = await listAllProjects(db);
+    expect(p.stage).toBe("outreach_enviado");
+    expect(p.stageGroup).toBe("qualification");
+    const acts = (await listActivitiesForProject(db, id)).filter((a) => a.type === "stage_change");
+    expect(acts).toHaveLength(1);
+    expect(acts[0].userId).toBe("22222222-2222-2222-2222-222222222222");
+  });
+
+  it("entrar a propuesta_enviada registra el momento proposal/sent", async () => {
+    const { db, id } = await seed();
+    await runMoveProjectStage(db, formOf({ projectId: id, stage: "propuesta_enviada" }), null);
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "proposal");
+    expect(moments).toHaveLength(1);
+    expect(moments[0].metadata).toEqual({ moment: "sent" });
+  });
+
+  it("entrar a contrato_firmado fuerza won + momento contract/signed", async () => {
+    const { db, id } = await seed();
+    await runMoveProjectStage(db, formOf({ projectId: id, stage: "contrato_firmado" }), null);
+    const [p] = await listAllProjects(db);
+    expect(p.status).toBe("won");
+    const moments = (await listActivitiesForProject(db, id)).filter((a) => a.type === "contract");
+    expect(moments[0].metadata).toEqual({ moment: "signed" });
+  });
+
+  it("misma etapa → no-op sin activities de transición", async () => {
+    const { db, id } = await seed();
+    await runMoveProjectStage(db, formOf({ projectId: id, stage: "lead_sin_contactar" }), null);
+    const acts = (await listActivitiesForProject(db, id)).filter((a) => a.type === "stage_change");
+    expect(acts).toHaveLength(0);
+  });
+
+  it("project inexistente → error", async () => {
+    const { db } = await seed();
+    const res = await runMoveProjectStage(db, formOf({ projectId: "00000000-0000-0000-0000-000000000000", stage: "outreach_enviado" }), null);
+    expect(res).toEqual({ ok: false, error: "No se encontró el proyecto" });
+  });
+
+  it("stage inválida → error", async () => {
+    const { db, id } = await seed();
+    const res = await runMoveProjectStage(db, formOf({ projectId: id, stage: "nope" }), null);
+    expect(res.ok).toBe(false);
   });
 });

@@ -4,11 +4,52 @@ import {
   type ProjectUpdateFields,
 } from "@/db/projects";
 import { projects, activities } from "@/db/schema";
-import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
+import { projectCreateSchema, projectUpdateSchema, stageMoveSchema } from "@/lib/validation";
 import { stageGroupFor, autoStatusForStage } from "@/lib/project-pipeline";
 import type { ActionResult } from "@/lib/company-mutations";
 import { eq } from "drizzle-orm";
 import * as activityLog from "@/lib/activity-log";
+
+type Tx = Parameters<Parameters<AnyDb["transaction"]>[0]>[0];
+
+// Registra la transición de etapa: stage_change (inmutable) + momento comercial si la etapa
+// destino es gatillo (§8.3). Se llama SOLO en una transición real (from !== to).
+async function recordStageTransition(
+  tx: Tx,
+  args: {
+    companyId: string;
+    projectId: string;
+    fromStage: string;
+    toStage: string;
+    actorUserId: string | null;
+  }
+): Promise<void> {
+  await tx.insert(activities).values({
+    companyId: args.companyId,
+    projectId: args.projectId,
+    userId: args.actorUserId,
+    type: "stage_change",
+    direction: "none",
+    subject: null,
+    body: null,
+    source: "system",
+    metadata: activityLog.stageChangeMetadata(args.fromStage, args.toStage),
+  });
+  const moment = activityLog.commercialMomentForStage(args.toStage);
+  if (moment) {
+    await tx.insert(activities).values({
+      companyId: args.companyId,
+      projectId: args.projectId,
+      userId: args.actorUserId,
+      type: moment.type,
+      direction: "none",
+      subject: null,
+      body: null,
+      source: "system",
+      metadata: { moment: moment.moment },
+    });
+  }
+}
 
 export async function runCreateProject(
   db: AnyDb,
@@ -115,36 +156,60 @@ export async function runUpdateProject(
         : fields;
       await tx.update(projects).set(effectiveFields).where(eq(projects.id, id));
       if (isEntry) {
-        await tx.insert(activities).values({
+        await recordStageTransition(tx, {
           companyId: current.companyId,
           projectId: id,
-          userId: actorUserId,
-          type: "stage_change",
-          direction: "none",
-          subject: null,
-          body: null,
-          source: "system",
-          metadata: activityLog.stageChangeMetadata(current.stage, fields.stage),
+          fromStage: current.stage,
+          toStage: fields.stage,
+          actorUserId,
         });
-        const moment = activityLog.commercialMomentForStage(fields.stage);
-        if (moment) {
-          await tx.insert(activities).values({
-            companyId: current.companyId,
-            projectId: id,
-            userId: actorUserId,
-            type: moment.type,
-            direction: "none",
-            subject: null,
-            body: null,
-            source: "system",
-            metadata: { moment: moment.moment },
-          });
-        }
       }
       return { ok: true };
     });
     return result;
   } catch {
     return { ok: false, error: "No se pudo actualizar el proyecto" };
+  }
+}
+
+export async function runMoveProjectStage(
+  db: AnyDb,
+  formData: FormData,
+  actorUserId: string | null = null
+): Promise<ActionResult> {
+  const parsed = stageMoveSchema.safeParse({
+    projectId: formData.get("projectId"),
+    stage: formData.get("stage"),
+  });
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  const { projectId, stage } = parsed.data;
+  try {
+    return await db.transaction(async (tx): Promise<ActionResult> => {
+      const [current] = await tx
+        .select({ stage: projects.stage, companyId: projects.companyId })
+        .from(projects)
+        .where(eq(projects.id, projectId))
+        .limit(1);
+      if (!current) return { ok: false, error: "No se encontró el proyecto" };
+      if (current.stage === stage) return { ok: true };
+
+      const autoStatus = autoStatusForStage(stage);
+      const updateSet = autoStatus
+        ? { stage, stageGroup: stageGroupFor(stage), status: autoStatus, lostReason: null, lostReasonNote: null }
+        : { stage, stageGroup: stageGroupFor(stage) };
+      await tx.update(projects).set(updateSet).where(eq(projects.id, projectId));
+      await recordStageTransition(tx, {
+        companyId: current.companyId,
+        projectId,
+        fromStage: current.stage,
+        toStage: stage,
+        actorUserId,
+      });
+      return { ok: true };
+    });
+  } catch {
+    return { ok: false, error: "No se pudo mover la etapa" };
   }
 }

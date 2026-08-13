@@ -5,6 +5,7 @@ import {
   contactCreateSchema,
   noteCreateSchema,
   taskCreateSchema,
+  stageMoveSchema,
 } from "@/lib/validation";
 
 describe("companyCreateSchema", () => {
@@ -112,5 +113,19 @@ describe("taskCreateSchema", () => {
   });
   it("rechaza projectId no-uuid", () => {
     expect(taskCreateSchema.safeParse({ projectId: "nope", title: "T", dueDate: "2026-09-01" }).success).toBe(false);
+  });
+});
+
+describe("stageMoveSchema", () => {
+  const pid = "11111111-1111-1111-8111-111111111111";
+  it("acepta projectId uuid + stage válida", () => {
+    const r = stageMoveSchema.safeParse({ projectId: pid, stage: "propuesta_enviada" });
+    expect(r.success).toBe(true);
+  });
+  it("rechaza stage inválida", () => {
+    expect(stageMoveSchema.safeParse({ projectId: pid, stage: "nope" }).success).toBe(false);
+  });
+  it("rechaza projectId no-uuid", () => {
+    expect(stageMoveSchema.safeParse({ projectId: "x", stage: "propuesta_enviada" }).success).toBe(false);
   });
 });
