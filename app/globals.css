@@ -153,6 +153,13 @@
   --pot-alto:      oklch(0.69  0.150 58);
   --pot-muyalto:   oklch(0.64  0.175 46);
 
+  /* Sidebar / app shell — panel de control cálido oscuro (constante en ambos temas) */
+  --nav-bg:       oklch(0.255 0.016 62);
+  --nav-surface:  oklch(0.305 0.017 62);
+  --nav-ink:      oklch(0.93  0.010 82);
+  --nav-muted:    oklch(0.68  0.014 72);
+  --nav-line:     oklch(0.36  0.014 64);
+
   /* Rampa de pipeline (6 grupos) Sol→Almacenamiento — usada por los charts del dashboard */
   --pipe-1: var(--solar);
   --pipe-2: color-mix(in oklch, var(--solar), var(--storage) 20%);
@@ -221,6 +228,13 @@
   --pot-medio:     oklch(0.66  0.100 66);
   --pot-alto:      oklch(0.74  0.150 58);
   --pot-muyalto:   oklch(0.80  0.170 50);
+
+  /* Sidebar en dark: un paso más profundo que el bg para separarlo del canvas */
+  --nav-bg:       oklch(0.165 0.010 64);
+  --nav-surface:  oklch(0.225 0.012 64);
+  --nav-ink:      oklch(0.94  0.008 82);
+  --nav-muted:    oklch(0.66  0.014 74);
+  --nav-line:     oklch(0.30  0.012 66);
 
   /* shadcn/ui extra */
   --chart-1: oklch(0.87 0 0);
@@ -353,4 +367,7 @@
   .badge-success { background: var(--success-wash); color: var(--success-ink); }
   .badge-danger  { background: var(--danger-wash);  color: var(--danger-ink); }
   .badge-neutral { background: var(--surface-2);    color: var(--muted); }
+  /* Solar + BESS: dualidad de marca; wash derivado del morado-índigo intermedio. */
+  .badge-both    { background: color-mix(in oklch, var(--sol-both) 15%, var(--surface));
+                   color: var(--sol-both); }
 }
